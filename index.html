@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+  <head>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#05070a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link rel="icon" href="logo.png" type="image/png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>شجرة العائلة</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="bg-glow"></div>
+
+    <div class="main-wrapper">
+      <header class="navbar glass">
+        <div class="nav-logo">
+          <span class="logo-icon">🌳</span>
+          <span class="logo-text">العائلة</span>
+        </div>
+
+        <div class="nav-search">
+          <div class="search-wrapper">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="ابحث عن فرد..."
+              oninput="window.searchMember()"
+            />
+            <span class="search-hint">🔍</span>
+            <div id="search-results" class="search-results"></div>
+          </div>
+        </div>
+
+        <div class="nav-controls">
+          <button
+            class="btn-icon"
+            onclick="window.toggleTheme()"
+            title="تبديل الوضع"
+          >
+            🌙
+          </button>
+          <button class="btn-nav" onclick="window.showFullTree()">
+            🌳 <span class="nav-btn-text">الشجرة الكاملة</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="tree-wrapper">
+        <svg id="tree-svg">
+          <defs>
+            <linearGradient
+              id="line-gradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop
+                offset="0%"
+                style="stop-color: var(--primary-glow); stop-opacity: 1"
+              />
+              <stop
+                offset="100%"
+                style="stop-color: var(--secondary-glow); stop-opacity: 1"
+              />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="tree-container" id="tree-container"></div>
+      </div>
+    </div>
+
+    <div id="bio-modal" class="modal">
+      <div class="modal-content glass">
+        <span class="close-btn" onclick="window.closeBio()">&times;</span>
+
+        <div id="view-section">
+          <img id="modal-img" src="" alt="صورة الفرد" />
+          <h2 id="modal-name"></h2>
+          <span id="modal-id-display" style="display: none"></span>
+          <div class="modal-actions">
+            <button class="btn-primary" onclick="window.switchProfile()">
+              انتقال للملف الشخصي🔍
+            </button>
+            <button
+              class="btn-secondary"
+              onclick="window.toggleEditSection(true)"
+            >
+              تعديل ✏️
+            </button>
+            <button
+              class="btn-secondary"
+              onclick="window.toggleAddSection(true)"
+            >
+              إضافة قريب ➕
+            </button>
+            <button class="btn-danger" onclick="window.deleteMember()">
+              حذف 🗑️
+            </button>
+          </div>
+        </div>
+
+        <div id="edit-section" style="display: none">
+          <h3>تعديل بيانات <span id="edit-target-name"></span></h3>
+          <input type="text" id="edit-name" placeholder="الاسم الجديد" />
+          <input type="text" id="edit-img" placeholder="رابط صورة جديد" />
+          <div class="modal-actions">
+            <button class="btn-primary" onclick="window.saveEdit()">
+              حفظ ✅
+            </button>
+            <button
+              class="btn-secondary"
+              onclick="window.toggleEditSection(false)"
+            >
+              إلغاء ❌
+            </button>
+          </div>
+        </div>
+
+        <div id="add-section" style="display: none">
+          <h3>إضافة قريب لـ <span id="target-parent-name"></span></h3>
+          <input type="text" id="new-name" placeholder="الاسم" />
+          <select id="new-gender">
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+          <select id="relation-type">
+            <option value="child">ابن / ابنة</option>
+            <option value="parent">أب / أم</option>
+            <option value="spouse">زوج / زوجة</option>
+            <option value="sibling">أخ / أخت</option>
+          </select>
+          <div class="switch-container">
+            <span class="switch-label">إخفاء من الشجرة الاساسيه؟</span>
+            <label class="switch">
+              <input type="checkbox" id="hide-from-main" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary" onclick="window.addNewRelative()">
+              تأكيد ✅
+            </button>
+            <button
+              class="btn-secondary"
+              onclick="window.toggleAddSection(false)"
+            >
+              رجوع ❌
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
