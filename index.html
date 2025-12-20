@@ -19,9 +19,12 @@
 
     <div class="main-wrapper">
       <header class="navbar glass">
-        <div class="nav-logo">
-          <span class="logo-icon">🌳</span>
-          <span class="logo-text">العائلة</span>
+        <div
+          class="nav-logo"
+          onclick="window.showFullTree()"
+          style="cursor: pointer"
+        >
+          <img src="logo.png" class="logo-img" alt="Logo" />
         </div>
 
         <div class="nav-search">
@@ -45,6 +48,10 @@
           >
             🌙
           </button>
+          <button class="btn-secondary" onclick="window.shareMember()">
+            مشاركة الملف 🔗
+          </button>
+
           <button class="btn-nav" onclick="window.showFullTree()">
             🌳 <span class="nav-btn-text">الشجرة الكاملة</span>
           </button>
