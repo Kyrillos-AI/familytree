@@ -1,8 +1,17 @@
-// ملف Service Worker أساسي لتلبية متطلبات Chrome
+// Service Worker مطور لضمان تفعيل ميزة PWA
+const CACHE_NAME = "family-tree-v1";
+const assets = [
+  "./",
+  "./index.html",
+  "./style.css",
+  "./script.js",
+  "./logo.png",
+];
+
 self.addEventListener("install", (e) => {
-  console.log("SW Installed");
+  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(assets)));
 });
 
 self.addEventListener("fetch", (e) => {
-  // يمكن تركها فارغة حالياً للسماح بالتحميل العادي
+  e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
 });
