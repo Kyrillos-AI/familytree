@@ -1,20 +1,48 @@
 {
-  "short_name": "العائلة",
-  "name": " شجره العائلة ",
+  "name": "شجره العيله الذكيه",
+  "short_name": "العـائـلـه",
+  "description": "تطبيق ذكي لإدارة وتوثيق شجرة العائلة واكتشاف صلات القرابة",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#020604",
+  "theme_color": "#064e3b",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "logo.png",
+      "src": "icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#05070a",
-  "background_color": "#05070a"
+  "shortcuts": [
+    {
+      "name": "كاشف القرابة",
+      "short_name": "القرابة",
+      "description": "افتح محرك حساب صلة القرابة مباشرة",
+      "url": "index.html?action=calc",
+      "icons": [{ "src": "icons/calc-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "إضافة فرد",
+      "short_name": "إضافة",
+      "url": "index.html?action=add",
+      "icons": [{ "src": "icons/add-icon.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/mobile-view.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "عرض الشجرة الذكية"
+    }
+  ]
 }
