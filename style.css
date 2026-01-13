@@ -1,22 +1,15 @@
-/* استايل "شجرة التكنولوجيا" المستوحى من اللوجو */
-
+/* =========================================
+ 1.Custom Theme Variables
+ ========================================= */
 :root[data-theme="dark"] {
-  /* الخلفية: مستوحاة من ظلال اللوجو العميقة */
   --bg-main: #020604;
-  --bg-gradient-start: #064e3b; /* الأخضر الغامق للأوراق */
+  --bg-gradient-start: #064e3b;
   --bg-gradient-mid: rgba(251, 191, 36, 0.2);
-  /* الأزرق الداكن للذكاء الاصطناعي */
-
-  /* الزجاج: شفافية خضراء داكنة */
   --glass-bg: rgba(6, 78, 59, 0.2);
-  --glass-border: rgba(251, 191, 36, 0.2); /* لمسة ذهبية خفيفة للحدود */
-
-  /* النصوص والوهج: مستوحاة من توهج اللوجو */
+  --glass-border: rgba(251, 191, 36, 0.2);
   --text-main: #ecfdf5;
-  --primary-glow: #10b981; /* أخضر الأوراق المضيء */
-  --secondary-glow: #fbbf24; /* ذهبي الدوائر الكهربائية */
-
-  /* ألوان النوع */
+  --primary-glow: #10b981;
+  --secondary-glow: #fbbf24;
   --male-color: #06d4ca; /* أزرق "المخ" التقني في اللوجو */
   --female-color: #fb71bd; /* وردي مرجاني متناسق */
   --chat-bg: #0f172a; /* كحلي غامق جداً */
@@ -36,21 +29,14 @@
 }
 
 :root[data-theme="light"] {
-  /* الخلفية: درجات المينت والكريمي النقي */
   --bg-main: #f0fdf4;
   --bg-gradient-start: #dcfce7;
-  --bg-gradient-mid: #fef3c7; /* إضاءة ذهبية خفيفة */
-
-  /* الزجاج: شفافية نقية بلمسات خضراء */
+  --bg-gradient-mid: #fef3c7;
   --glass-bg: rgba(255, 255, 255, 0.6);
   --glass-border: rgba(16, 185, 129, 0.3);
-
-  /* النصوص والوهج */
   --text-main: #064e3b;
-  --primary-glow: #059669; /* أخضر شجري طبيعي */
-  --secondary-glow: #d97706; /* بني ذهبي عميق */
-
-  /* ألوان النوع */
+  --primary-glow: #059669;
+  --secondary-glow: #d97706;
   --male-color: #0083a3; /* أزرق تقني هادئ */
   --female-color: #e11d48; /* أحمر وردي واضح */
   --chat-bg: #ffffff;
@@ -68,10 +54,11 @@
     #f43f5e,
     #a855f7
   );
-
-  /* خلفية قائمة الإيموجي */
   --emoji-bg: rgba(255, 255, 255, 0.95);
 }
+/* =========================================
+ 2.Base Styles
+ ========================================= */
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -80,7 +67,9 @@ body {
   width: 100vw;
   height: 100vh;
 }
-/* تنسيق لودر اللوجو التقني */
+/* =========================================
+ 3.Loader Styles
+ ========================================= */
 #loader-wrapper {
   position: fixed;
   inset: 0;
@@ -98,7 +87,6 @@ body {
   align-items: center;
 }
 
-/* هالة الضوء خلف اللوجو */
 .logo-glow-ring {
   position: absolute;
   width: 180px;
@@ -109,7 +97,6 @@ body {
   filter: blur(20px);
   animation: logoPulse 2s ease-in-out infinite;
 }
-
 .loader-logo-img {
   width: 150px;
   height: 150px;
@@ -119,7 +106,6 @@ body {
   animation: logoFloat 3s ease-in-out infinite;
 }
 
-/* شريط التحميل السفلي النحيف */
 .loading-bar-container {
   width: 200px;
   height: 2px;
@@ -149,8 +135,6 @@ body {
   font-weight: bold;
   opacity: 0.8;
 }
-
-/* حركات الأنيميشن */
 @keyframes logoPulse {
   0%,
   100% {
@@ -178,8 +162,9 @@ body {
     width: 100%;
   }
 }
-/* التحكم في ظهور المجموعات */
-/* الوضع الافتراضي (وضع العرض): زراير التعديل مخفية */
+/* =========================================
+ 4.Admin Mode Styles
+ ========================================= */
 .view-controls {
   display: flex !important;
 }
@@ -213,127 +198,14 @@ body.admin-mode #settings-btn svg {
     transform: rotate(360deg);
   }
 }
-/* ========================================= */
-/* استايل الراديو بوتون (Tech Radio Cards) */
-/* ========================================= */
-
-/* حاوية الراديو */
-.tech-radio-group {
-  display: flex;
-  gap: 15px;
-  width: 100%;
-  margin: 15px 0;
-}
-
-/* الكارت نفسه (Label) */
-.tech-radio-label {
-  flex: 1; /* لجعل الزرين متساويين */
-  position: relative;
-  cursor: pointer;
-}
-
-/* إخفاء دائرة الراديو الافتراضية القبيحة */
-.tech-radio-label input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* تصميم البطاقة الظاهرية */
-.tech-radio-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  /* خلفية زجاجية داكنة قليلاً لتبرز عن الخلفية */
-  background: rgba(0, 0, 0, 0.15);
-  border: 1px solid var(--glass-border);
-  padding: 12px 10px;
-  border-radius: 15px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--text-main);
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* في الوضع الفاتح، نفتح الخلفية قليلاً */
-[data-theme="light"] .tech-radio-content {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-/* تصميم الدائرة المخصصة داخل الزر */
-.radio-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--text-main);
-  position: relative;
-  transition: 0.3s;
-  opacity: 0.6;
-}
-
-/* النقطة الداخلية (مخفية افتراضياً) */
-.radio-dot::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary-glow);
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* --- حالة التحويم (Hover) --- */
-.tech-radio-label:hover .tech-radio-content {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--primary-glow);
-  transform: translateY(-2px);
-}
-
-/* --- حالة الاختيار (Checked) - السحر كله هنا --- */
-.tech-radio-label input:checked + .tech-radio-content {
-  /* حدود بلون النيون */
-  border-color: var(--primary-glow);
-  /* توهج داخلي خفيف */
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2),
-    inset 0 0 10px rgba(16, 185, 129, 0.05);
-  background: rgba(16, 185, 129, 0.08); /* لون أخضر شفاف جداً */
-  color: var(--primary-glow);
-}
-
-/* تلوين الدائرة عند الاختيار */
-.tech-radio-label input:checked + .tech-radio-content .radio-dot {
-  border-color: var(--primary-glow);
-  opacity: 1;
-}
-
-/* إظهار النقطة الداخلية */
-.tech-radio-label input:checked + .tech-radio-content .radio-dot::after {
-  transform: translate(-50%, -50%) scale(1);
-}
-/* تحسين شكل صف الزراير عشان يبقى متناسق */
+/* =========================================
+ 5.Modern Modal Styles
+ ========================================= */
 .modal-row-actions {
   justify-content: space-evenly;
   padding: 20px 10px;
   gap: 10px;
 }
-/* إضافة تلوين البطاقات بناءً على الجنس */
-.member-card.male-card img {
-  border: 3px solid var(--male-color);
-  box-shadow: 0 0 15px var(--male-color);
-}
-.member-card.female-card img {
-  border: 3px solid var(--female-color);
-  box-shadow: 0 0 15px var(--female-color);
-}
-
-/* تخصيص شريط التمرير ليناسب الثيم */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -362,22 +234,16 @@ body.admin-mode #settings-btn svg {
   z-index: -1;
   transition: background 0.5s ease; /* جعل الانتقال أكثر نعومة */
 }
-/* إضافة تأثير الزووم عند الوقوف بالماوس */
-.member-card:hover {
-  transform: translateY(-30px) scale(1.4); /* زووم وارتفاع بسيط */
-  filter: brightness(1.1);
-}
-/* النافبار المطور */
-/* النافبار المودرن المتمركز بدقة */
 
+/* =========================================
+ 6.Navigation Bar & Search Styles
+ ========================================= */
 .nav-controls {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-/* تطوير شامل لشكل خانات الإدخال والقوائم */
-/* تحديث خلفية خانات الإدخال لتصبح أوضح */
 input[type="text"],
 select {
   width: 100%;
@@ -385,7 +251,6 @@ select {
   margin: 10px 5px;
   border-radius: 15px;
   border: 1px solid var(--glass-border);
-  /* جعل الخلفية أغمق (0.15 بدلاً من 0.08) لزيادة التباين */
   background: rgba(0, 0, 0, 0.1);
   color: var(--text-main) !important;
   font-size: 0.95rem;
@@ -435,20 +300,6 @@ select option {
   color: var(--text-main);
   padding: 10px;
 }
-
-.couple-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-  justify-content: center;
-  background: rgba(99, 102, 241, 0.05);
-  border: 1px dashed var(--glass-border);
-  border-radius: 40px;
-  padding: 25px 40px;
-  margin: 0 20px;
-  position: relative;
-}
-/* تنسيق الأزرار (Buttons) */
 .btn-nav,
 .btn-primary,
 .btn-secondary,
@@ -502,7 +353,24 @@ button:hover {
   filter: brightness(1.2);
 }
 
-/* الشجرة والأيقونات */
+/* =========================================
+ 7.Couple Wrapper Styles  
+ ========================================= */
+.couple-wrapper {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px dashed var(--glass-border);
+  border-radius: 40px;
+  padding: 25px 40px;
+  margin: 0 20px;
+  position: relative;
+}
+/* =========================================
+  8.Family Tree Styles
+ ========================================= */
 .tree-wrapper {
   position: relative;
   width: 100%;
@@ -546,7 +414,9 @@ button:hover {
   width: 100%;
   margin-bottom: 20px;
 }
-/* تصميم الأيقونة الدائرية وصندوق الاسم الصغير */
+/* =========================================
+  9.Member Card Styles
+ ========================================= */
 .member-card {
   display: flex;
   flex-direction: column;
@@ -559,7 +429,15 @@ button:hover {
   /* انتقال ناعم جداً لمدة 0.5 ثانية مع تباطؤ في النهاية */
   transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
+/* إضافة تلوين البطاقات بناءً على الجنس */
+.member-card.male-card img {
+  border: 3px solid var(--male-color);
+  box-shadow: 0 0 15px var(--male-color);
+}
+.member-card.female-card img {
+  border: 3px solid var(--female-color);
+  box-shadow: 0 0 15px var(--female-color);
+}
 /* تغيير شكل الصور لتطابق الصور المرفقة (مربعات منحنية) */
 .member-card img {
   width: 85px; /* تكبير الحجم قليلاً */
@@ -591,7 +469,11 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+/* إضافة تأثير الزووم عند الوقوف بالماوس */
+.member-card:hover {
+  transform: translateY(-30px) scale(1.4); /* زووم وارتفاع بسيط */
+  filter: brightness(1.1);
+}
 /* ألوان النيون */
 .male-card img {
   border-color: var(--male-color);
@@ -4408,106 +4290,385 @@ body.admin-mode .btn-mini-mode svg {
   display: block;
 }
 /* ========================================= */
-/* 📱 وضع الموبايل (Mobile App Mode) */
+/* 📱 خلطة التطبيق السحرية (App Feel) */
 /* ========================================= */
 
-@media (max-width: 768px) {
-  /* 1. الحاوية الرئيسية: إلغاء تقسيم الشاشة */
-  .split-screen-container {
-    flex-direction: column; /* العناصر تحت بعض مش جنب بعض */
-    padding: 20px;
-    justify-content: center; /* توسيط المحتوى */
-    gap: 20px;
+/* 1. دعم النوتش (Notch) والجزيرة الديناميكية */
+/* ده بيخلي الخلفية تملأ الشاشة كلها حتى تحت الكاميرا */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body,
+  #landing-page,
+  .modal-content {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
-  /* 2. لوحة المقدمة (النصوص): تصغيرها أو إخفاء التفاصيل */
-  .intro-panel {
-    width: 100%;
-    padding: 0;
-    text-align: center; /* توسيط النص */
-    align-items: center;
-    flex: 0 0 auto; /* لا تأخذ مساحة كبيرة */
-    margin-bottom: 10px;
+  /* القوائم السفلية تبعد عن زرار الهوم بتاع الموبايل */
+  .view-controls,
+  #chat-wrapper,
+  .actions-bar-v2 {
+    padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
   }
+}
 
-  /* تصغير اللوجو والعنوان */
-  .brand-large {
-    justify-content: center;
-    margin-bottom: 10px;
-  }
-  .tree-icon-large {
-    font-size: 2.5rem;
-  }
-  .main-title {
-    font-size: 2rem;
-  }
+/* 2. إلغاء حركات المتصفح المستفزة */
+* {
+  /* منع تحديد النصوص زي التطبيقات */
+  -webkit-user-select: none;
+  user-select: none;
 
-  /* إخفاء الشعار النصي الطويل في الموبايل لتوفير مساحة */
-  .hero-slogan {
-    display: none;
-  }
+  /* منع ظهور لون أزرق شفاف لما تدوس على زرار في الموبايل */
+  -webkit-tap-highlight-color: transparent;
+}
 
-  /* 3. لوحة الدخول (الفورم): ملء الشاشة */
-  .auth-panel {
-    width: 100%;
-    padding: 0;
-    justify-content: flex-start; /* تبدأ من الأعلى */
-  }
+/* السماح بتحديد النصوص فقط في أماكن الكتابة */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
 
-  .glass-login-card {
-    width: 100%;
-    max-width: 100%; /* استغلال العرض بالكامل */
-    padding: 25px 20px;
-    margin: 0;
-    border-radius: 20px;
-    /* خلفية أغمق قليلاً في الموبايل للقراءة الأفضل */
-    background: rgba(18, 18, 18, 0.85);
-  }
+/* 3. تحسين اللمس */
+button,
+.action-item,
+.choice-card-modern,
+.nav-toggle-btn {
+  cursor: pointer;
+  touch-action: manipulation; /* تسريع استجابة اللمس */
+}
 
-  /* 4. كروت الاختيار (إنشاء / انضمام) */
-  #choice-main-view {
-    flex-direction: column; /* الكروت تحت بعض */
-    gap: 15px;
-    width: 100%;
-  }
+/* 4. منع السحب "Rubber Banding" (لما تشد الصفحة وتتمط) */
+body {
+  overscroll-behavior-y: none;
+}
+/* تنسيقات الشات الخاص */
+#p-chat-messages {
+  background: rgba(0, 0, 0, 0.2);
+  /* باترن خفيف للخلفية */
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+}
 
-  .choice-card-modern {
-    width: 100%; /* الكارت يملأ العرض */
-    min-width: unset; /* إلغاء الحد الأدنى */
-    padding: 20px;
-    display: flex;
-    flex-direction: row; /* الأيقونة جنب النص */
-    align-items: center;
-    text-align: right;
-    gap: 15px;
-  }
+.chat-input-area input:focus {
+  outline: 2px solid #10b981;
+  background: rgba(0, 0, 0, 0.5);
+}
+/* =========================================
+   تنسيق قائمة الإعدادات الجديدة (Settings Modal)
+   ========================================= */
 
-  /* تعديل شكل الأيقونة داخل الكارت لتكون جانبية */
-  .choice-card-modern .choice-icon {
-    font-size: 2rem;
-    margin-bottom: 0;
-  }
+/* الكارت نفسه */
+.settings-card-modern {
+  background: rgba(30, 30, 30, 0.95); /* لون غامق صريح مش شفاف قوي */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 450px; /* عرض مناسب */
+  padding: 0; /* التباعد يتم داخلياً */
+  overflow: hidden;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh; /* عشان لو الشاشة صغيرة */
+}
 
-  .choice-card-modern .choice-title {
-    font-size: 1.1rem;
-    margin-bottom: 2px;
-  }
+/* رأس القائمة */
+.settings-header {
+  background: linear-gradient(135deg, var(--primary-color, #10b981), #059669);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
 
-  .choice-card-modern .choice-desc {
-    font-size: 0.8rem;
-    display: block; /* إظهار الوصف بخط صغير */
-    opacity: 0.7;
-  }
+.settings-body {
+  padding: 20px;
+  overflow-y: auto; /* سكرول لو المحتوى طويل */
+}
 
-  /* 5. تحسينات حقول الإدخال للمس */
-  .custom-input-group input {
-    height: 50px; /* تكبير الارتفاع عشان الصباع */
-    font-size: 1rem;
-  }
+/* أقسام داخلية */
+.settings-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
 
-  .action-btn,
-  .social-btn {
-    height: 50px; /* أزرار كبيرة سهلة الضغط */
-    font-size: 1rem;
+.section-title {
+  color: #fbbf24; /* لون ذهبي للعنوان */
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  display: block;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+}
+
+/* تنسيق خانة الإدخال */
+.modern-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  outline: none;
+}
+.modern-input:focus {
+  border-color: #10b981;
+}
+
+/* تنسيق الشيك بوكس (Checkboxes) جنب بعض */
+.permissions-group {
+  display: flex;
+  gap: 15px;
+  margin: 10px 0;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* تنسيق شبكة الأزرار (عشان يجوا جنب بعض) */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* عمودين متساويين */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.actions-grid .btn-full {
+  grid-column: span 2; /* زرار ياخد العرض كله */
+}
+
+/* تحسين شكل القائمة */
+#admins-list {
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* أنيميشن الظهور */
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
   }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+#tree-settings-modal.modal {
+  display: none; /* مخفي افتراضياً */
+  /* عند الفتح سيتحول لـ flex بواسطة الجافاسكريبت أو تعديل الستايل */
+  z-index: 9999;
+}
+
+/* تحسين شكل الكارت داخل المودال */
+.settings-card-modern {
+  position: relative; /* عشان يبقى حر داخل المودال */
+  margin: auto; /* توسط تلقائي */
+  max-height: 90vh; /* عشان لو الشاشة صغيرة */
+  width: 90%;
+  max-width: 450px;
+  background: #1e1e1e; /* لون الخلفية */
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* تنسيق زر الإعدادات داخل القائمة */
+#settings-btn {
+  color: #fbbf24; /* لون ذهبي مميز */
+}
+#settings-btn:hover {
+  background: rgba(251, 191, 36, 0.1);
+}
+/* تنسيق الشاشات داخل لوحة الشات */
+.chat-view {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeIn 0.3s ease;
+}
+.chat-view.active {
+  display: flex;
+}
+
+/* زر الرجوع */
+.back-btn-chat {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+/* تنسيق عناصر قائمة الشات */
+.chat-list-container {
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  margin-bottom: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: 0.2s;
+}
+.chat-list-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-glow);
+}
+.chat-list-item.pinned {
+  background: linear-gradient(
+    45deg,
+    rgba(16, 185, 129, 0.1),
+    rgba(0, 0, 0, 0.2)
+  );
+  border: 1px solid var(--primary-glow);
+}
+
+.chat-item-avatar {
+  position: relative;
+  width: 45px;
+  height: 45px;
+}
+.chat-item-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chat-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-item-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.chat-item-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+.chat-item-last-msg {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* زر محادثة جديدة */
+.btn-new-chat {
+  width: 100%;
+  padding: 10px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #a855f7;
+  border: 1px dashed #a855f7;
+  border-radius: 12px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+/* نتائج البحث المصغرة */
+.mini-results-list .search-item {
+  padding: 8px;
+  font-size: 0.85rem;
+}
+
+/* الهيدر الجديد للشات الخاص */
+.header-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.header-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--glass-border);
+}
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+.header-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+  line-height: 1.1;
+}
+.header-father {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  color: var(--secondary-glow);
+}
+.header-status {
+  font-size: 0.65rem;
+  color: #10b981; /* أخضر */
+}
+.header-status.offline {
+  color: #64748b; /* رمادي */
+}
+.list-divider {
+  text-align: center;
+  margin: 15px 0 5px;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  position: relative;
+}
+.list-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+  z-index: 0;
+}
+.list-divider span {
+  background: var(--bg-main); /* نفس لون خلفية المودال */
+  padding: 0 10px;
+  position: relative;
+  z-index: 1;
 }

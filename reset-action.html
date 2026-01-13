@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعيين كلمة مرور جديدة</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="landing.css" />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #0f172a;
+        overflow: hidden;
+      }
+      .reset-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 2rem;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+      .status-msg {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        min-height: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="aurora-bg">
+      <div class="aurora-blob b1"></div>
+      <div class="aurora-blob b2"></div>
+    </div>
+
+    <div class="reset-card" id="reset-content">
+      <h3>🔐 كلمة سر جديدة</h3>
+      <p style="color: #ccc; margin-bottom: 20px">
+        أدخل كلمة المرور الجديدة لحسابك
+      </p>
+
+      <div class="custom-input-group">
+        <span class="input-icon">🔑</span>
+        <input
+          type="password"
+          id="new-password"
+          placeholder="كلمة السر الجديدة"
+        />
+      </div>
+
+      <button class="action-btn" onclick="confirmNewPassword()">
+        حفظ كلمة المرور
+      </button>
+      <div id="msg-box" class="status-msg"></div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getAuth,
+        confirmPasswordReset,
+        verifyPasswordResetCode,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDDuWxwcYI3l6UAj2UsMzSBVFYFACjck94",
+        authDomain: "familytree-7c8be.firebaseapp.com",
+        projectId: "familytree-7c8be",
+        storageBucket: "familytree-7c8be.firebasestorage.app",
+        messagingSenderId: "140789780230",
+        appId: "1:140789780230:web:b815fccf7d4e5fc02a5887",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      // 1. استخراج الكود من رابط الصفحة
+      const urlParams = new URLSearchParams(window.location.search);
+      const oobCode = urlParams.get("oobCode");
+      const msgBox = document.getElementById("msg-box");
+      const btn = document.querySelector("button");
+
+      // التحقق من صحة الرابط فور فتح الصفحة
+      if (!oobCode) {
+        document.body.innerHTML =
+          "<h2 style='color:white; text-align:center'>رابط غير صالح أو منتهي الصلاحية ❌</h2>";
+      } else {
+        // فحص صلاحية الكود (اختياري لتحسين التجربة)
+        verifyPasswordResetCode(auth, oobCode)
+          .then((email) => {
+            msgBox.innerText = `جاري تعيين كلمة مرور للحساب: ${email}`;
+            msgBox.style.color = "#4ade80";
+          })
+          .catch((error) => {
+            msgBox.innerText = "هذا الرابط مستخدم مسبقاً أو منتهي الصلاحية ❌";
+            msgBox.style.color = "#ff4757";
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+          });
+      }
+
+      // 2. دالة الحفظ
+      window.confirmNewPassword = async () => {
+        const newPass = document.getElementById("new-password").value;
+        if (newPass.length < 6) {
+          msgBox.innerText = "كلمة المرور يجب أن تكون 6 أحرف على الأقل ⚠️";
+          msgBox.style.color = "#fbbf24";
+          return;
+        }
+
+        btn.innerText = "جاري الحفظ...";
+        btn.disabled = true;
+
+        try {
+          await confirmPasswordReset(auth, oobCode, newPass);
+
+          document.getElementById("reset-content").innerHTML = `
+                    <div style="font-size:3rem">✅</div>
+                    <h3>تم التغيير بنجاح!</h3>
+                    <p>يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة</p>
+                    <button class="action-btn" onclick="window.location.href='index.html'">تسجيل الدخول</button>
+                `;
+        } catch (error) {
+          console.error(error);
+          msgBox.innerText = "حدث خطأ: " + error.message;
+          msgBox.style.color = "#ff4757";
+          btn.innerText = "حاول مجدداً";
+          btn.disabled = false;
+        }
+      };
+    </script>
+  </body>
+</html>

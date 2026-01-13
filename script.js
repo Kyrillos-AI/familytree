@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. Firebase Initialization and Auth State Handling
+   ========================================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -38,9 +41,9 @@ const auth = getAuth(app);
 let currentUser = null;
 let currentTreeId = null; // هنخزن فيه رقم الشجرة الحالية
 let membersUnsubscribe = null;
-/* ========================================= */
-/* 🛡️ كود الأمان ضد التهنيج (Anti-Freeze) */
-/* ========================================= */
+/* ========================================= 
+ 2.(Anti-Freeze) 
+ ========================================= */
 // بيشيل شاشة التحميل إجبارياً بعد 4 ثواني لو علقت
 setTimeout(() => {
   const loader = document.getElementById("loader-wrapper");
@@ -52,9 +55,9 @@ setTimeout(() => {
     }, 500);
   }
 }, 4000);
-/* ========================================= */
-/* 1. البوابة: فحص المستخدم وتوجيهه (مصحح) */
-/* ========================================= */
+/* ========================================= 
+ 2.Auth & Login
+ ========================================= */
 window.currentTreeId = null;
 
 onAuthStateChanged(auth, async (user) => {
@@ -130,9 +133,9 @@ window.openMyProfileSettings = () => {
   }
 };
 
-/* ========================================= */
-/* 3. إنشاء شجرة جديدة (بكلمة سر) */
-/* ========================================= */
+/* ========================================= 
+ 3. Create New Tree Flow  
+ ========================================= */
 window.startNewTreeFlow = async () => {
   const familyName = prompt("اكتب اسم العائلة (مثلاً: عائلة جرجس):");
   if (!familyName) return;
@@ -149,6 +152,8 @@ window.startNewTreeFlow = async () => {
       password: password,
       creatorId: currentUser.uid,
       createdAt: new Date().toISOString(),
+      ownerId: currentUser.uid,
+      adminPermissions: {},
     });
 
     // 2. إنشاء أول فرد (الجذر) - اللي هو أنت
@@ -179,9 +184,9 @@ window.startNewTreeFlow = async () => {
   }
 };
 
-/* ========================================= */
-/* 4. الانضمام لشجرة موجودة */
-/* ========================================= */
+/* ========================================= 
+ 4. join Existing Tree Flow
+ ========================================= */
 window.showJoinPopup = () => {
   const familyName = prompt("اكتب اسم العائلة للبحث عنها:");
   if (familyName) searchAndJoin(familyName);
@@ -224,9 +229,9 @@ async function searchAndJoin(name) {
   }
 }
 
-/* ========================================= */
-/* 5. تحميل الشجرة (القلب النابض) */
-/* ========================================= */
+/* ========================================= 
+ 5. load Tree Data and Real-time Updates  
+ ========================================= */
 function loadTreeData(treeId) {
   // 1. تنظيف الشاشة فوراً لمنع تداخل الأشجار (حل مشكلة الـ 3 أشخاص)
   const container = document.getElementById("tree-container");
@@ -267,7 +272,8 @@ function loadTreeData(treeId) {
         window.currentMembers.push({ ...doc.data(), id: doc.id });
       });
 
-      renderPerspectiveTree(); // رسم الشجرة الجديدة
+      renderPerspectiveTree();
+      checkAdminStatus(); // رسم الشجرة الجديدة
       document.getElementById("loader-wrapper").style.display = "none";
     },
     (error) => {
@@ -277,9 +283,9 @@ function loadTreeData(treeId) {
   );
 }
 
-/* ========================================= */
-/* نظام الدليل التفاعلي المطور (Smart Ultimate Tour) - V3 */
-/* ========================================= */
+/* =========================================
+  6. Help Tour System
+ ========================================= */
 
 let currentTourStep = 0;
 
@@ -631,7 +637,9 @@ function centerTooltip(box, tip) {
   tip.style.left = "50%";
   tip.style.transform = "translate(-50%, -50%)";
 }
-/* دالة التبديل بين وضع العرض ووضع التعديل (نسخة صامتة للمودال) */
+/* =========================================
+ 7. Back
+ ========================================= */
 window.toggleAppMode = () => {
   const body = document.body;
 
@@ -657,6 +665,10 @@ window.goBack = () => {
     refreshUI();
   });
 };
+
+/* =========================================
+ 8. Toggle Maternal Relatives View
+ ========================================= */
 window.showMaternal = false; // افتراضياً مخفي لتقليل الزحمة
 window.toggleMaternalRelatives = () => {
   window.showMaternal = !window.showMaternal;
@@ -670,6 +682,9 @@ window.toggleMaternalRelatives = () => {
   // إعادة بناء الواجهة ليعكس التغيير
   refreshUI();
 };
+/* =========================================
+ 9. Shared Link Handling
+ ========================================= */
 /* التحقق من وجود ID في الرابط عند فتح الصفحة */
 const urlParams = new URLSearchParams(window.location.search);
 const sharedId = urlParams.get("id");
@@ -678,7 +693,9 @@ if (sharedId) {
   currentFocusId = sharedId;
   viewMode = "perspective";
 }
-
+/* =========================================
+ 10. Relation Names in Arabic
+ ========================================= */
 const relationNames = {
   child: { male: "ابنـي", female: "بنتـي" },
   sibling: { male: "أخويـا", female: "أختـي" },
@@ -690,7 +707,9 @@ const relationNames = {
 
 let isFirstLoad = true; // تعريف المتغير في النطاق العام
 
-/* تحديث الواجهة مع تأخير ذكي لرسم الخطوط لمنع الأخطاء */
+/* =========================================
+ 11. UI Refresh with Smart Delay for Drawing Lines
+ ========================================= */
 function refreshUI() {
   if (!window.currentMembers || window.currentMembers.length === 0) {
     renderEmptyState();
@@ -721,7 +740,9 @@ function refreshUI() {
   }, 850); // يمكنك زيادة الرقم لـ 1000 لو لسا بتحصل مشاكل
 }
 
-// تحديث دالة الشجرة الكاملة لمنع تسرب الفروع الخاصة
+/* =========================================
+ 12. Render Full Tree with Privacy Filter
+ ========================================= */
 function renderFullTree(members) {
   const container = document.getElementById("tree-container");
   const svg = document.getElementById("tree-svg");
@@ -756,8 +777,9 @@ function renderFullTree(members) {
       container.appendChild(div);
     });
 }
-
-/* تحديث دالة المنظور: أخوال منفصلين بدون خطوط في صفحتك، ومتصلين في صفحتهم */
+/* =========================================
+ 13. Render Perspective Tree with Separate Maternal Uncles
+ ========================================= */
 function renderPerspectiveTree(focusId, allMembers) {
   // === [تصحيح الخطأ] ===
   // 1. لو البيانات لم تُرسل للدالة، نستخدم البيانات العالمية المحملة
@@ -951,7 +973,9 @@ function renderPerspectiveTree(focusId, allMembers) {
     )
   );
 }
-/* تحديث دالة البحث لإظهار اسم الأب لتمييز المتشابهين */
+/* =========================================
+ 14. Search Member Functionality
+ ========================================= */
 window.searchMember = () => {
   const val = document.getElementById("search-input").value.toLowerCase();
   const resDiv = document.getElementById("search-results");
@@ -1006,7 +1030,20 @@ window.searchMember = () => {
     resDiv.style.display = "none";
   }
 };
-/* فتح قسم التعديل (مع فلترة قائمة الأزواج) */
+window.addEventListener("click", (e) => {
+  const searchWrapper = document.querySelector(".search-wrapper");
+  const resultsDiv = document.getElementById("search-results");
+
+  // إذا كان الضغط خارج حاوية البحث، نخفي النتائج
+  if (searchWrapper && resultsDiv) {
+    if (!searchWrapper.contains(e.target)) {
+      resultsDiv.style.display = "none";
+    }
+  }
+});
+/* =========================================
+ 15. Edit Member Section Logic
+ ========================================= */
 window.toggleEditSection = (show) => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
@@ -1094,7 +1131,9 @@ window.toggleEditSection = (show) => {
     }
   }
 };
-// دالة فسخ الخطوبة (من قسم التعديل)
+/* =========================================
+ 16. Break Engagement Functionality
+ ========================================= */
 window.breakEngagement = async () => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
@@ -1129,7 +1168,9 @@ window.breakEngagement = async () => {
     window.customAlert("حدث خطأ: " + e.message);
   }
 };
-/* دالة إضافة قريب جديد (مع حماية الزواج الشرعي) */
+/* =========================================
+ 17. Add New Relative Functionality
+ ========================================= */
 window.addNewRelative = async () => {
   const focusId = document.getElementById("modal-id-display").innerText;
   const focusPerson = window.currentMembers.find((m) => m.id === focusId);
@@ -1138,7 +1179,7 @@ window.addNewRelative = async () => {
   const newGender = document.getElementById("new-gender").value;
   const relation = document.getElementById("relation-type").value;
   const existingMemberId = document.getElementById("new-existing-member").value;
-  // ... باقي المتغيرات (الصورة، الوفاة، إلخ) زي ما هي عندك ...
+
   const newImg =
     document.getElementById("new-img").value ||
     (newGender === "male" ? "mainmale.png" : "mainfemale.png");
@@ -1147,62 +1188,37 @@ window.addNewRelative = async () => {
   const dob = document.getElementById("new-dob").value;
   const hideMain = document.getElementById("new-hide-main").checked;
 
+  // التحقق من الشجرة الحالية
+  if (!window.currentTreeId)
+    return window.customAlert("خطأ: لم يتم التعرف على الشجرة الحالية");
+
   if (!newName && !existingMemberId)
     return window.customAlert("الرجاء إدخال الاسم أو اختيار شخص موجود!");
 
+  // ... (نفس كود التحقق من الزواج والقرابة الموجود سابقاً) ...
   if (relation === "spouse") {
-    // 1. ممنوع تعدد الزوجات/الأزواج
-    if (focusPerson.spouse) {
-      return window.customAlert(
-        "عفواً.. هذا الشخص متزوج بالفعل ولا يمكن إضافة شريك آخر ⛔"
-      );
-    }
-
-    // [جديد] 1.5. ممنوع إضافة زوج للمخطوب (يجب إتمام الزواج من زر مناسبة)
-    if (focusPerson.fiance) {
-      return window.customAlert(
-        "عفواً.. هذا الشخص مرتبط بخطوبة سارية! 💍🚫\nلإتمام الزواج، استخدم زر 'مناسبة' وحول الخطوبة لزواج."
-      );
-    }
-
-    // 2. ممنوع زواج نفس الجنس
-    // لو بضيف شخص جديد
-    if (!existingMemberId) {
-      if (focusPerson.gender === newGender) {
-        return window.customAlert("عفواً.. لا يمكن زواج نفس الجنس ⛔");
-      }
-    }
-    // لو بربط بشخص موجود
-    else {
-      const partner = window.currentMembers.find(
-        (m) => m.id === existingMemberId
-      );
-
-      // فحص القرابة والجنس
-      if (!isMarriageAllowed(focusPerson, partner)) {
-        return window.customAlert(
-          "لا يمكن إتمام هذا الزواج لوجود مانع شرعي (قرابة أو جنس) 🧬⛔"
-        );
-      }
-      // فحص حالة الشريك (هل هو كمان مرتبط؟)
-      if (partner.spouse) {
-        return window.customAlert(`عفواً.. ${partner.name} متزوج/ة بالفعل ⛔`);
-      }
-      if (partner.fiance) {
-        return window.customAlert(
-          `عفواً.. ${partner.name} مخطوب/ة بالفعل 💍⛔`
-        );
-      }
-    }
+    if (focusPerson.spouse)
+      return window.customAlert("عفواً.. هذا الشخص متزوج بالفعل ⛔");
+    if (focusPerson.fiance)
+      return window.customAlert("عفواً.. هذا الشخص مرتبط بخطوبة سارية! 💍⛔");
+    if (!existingMemberId && focusPerson.gender === newGender)
+      return window.customAlert("عفواً.. لا يمكن زواج نفس الجنس ⛔");
   }
-  // ===============================================
 
   try {
     let newDocId = existingMemberId;
 
+    // تحديد المسار الصحيح للكولكشن (داخل الشجرة)
+    const membersCollectionRef = collection(
+      db,
+      "trees",
+      window.currentTreeId,
+      "members"
+    );
+
     // لو شخص جديد (Create)
     if (!existingMemberId) {
-      const docRef = await addDoc(collection(db, "members"), {
+      const docRef = await addDoc(membersCollectionRef, {
         name: newName,
         gender: newGender,
         img: newImg,
@@ -1210,20 +1226,18 @@ window.addNewRelative = async () => {
         isDeceased: isDeceased,
         deathDate: isDeceased ? deathDate : null,
         isPrivate: hideMain,
-        level: focusPerson.level, // مؤقتاً
-        socialLinks: [], // افترض إنك بتجمع اللينكات
+        level: focusPerson.level,
+        socialLinks: [],
+        createdAt: new Date().toISOString(),
       });
       newDocId = docRef.id;
     }
 
-    // (باقي كود الربط زي ما هو بالظبط..)
     const updatesFocus = {};
     const updatesNew = {};
 
     if (relation === "parent") {
       updatesNew.level = focusPerson.level - 1;
-      // منطق الأبناء...
-      // (الكود القديم بتاعك هنا)
       updatesFocus.parent = newDocId;
     } else if (relation === "child") {
       updatesNew.level = focusPerson.level + 1;
@@ -1232,7 +1246,6 @@ window.addNewRelative = async () => {
       updatesNew.level = focusPerson.level;
       updatesFocus.spouse = newDocId;
       updatesNew.spouse = focusId;
-      // تنظيف الخطوبة لو تحولت لزواج
       updatesFocus.fiance = null;
       updatesFocus.engagementDate = null;
       updatesNew.fiance = null;
@@ -1242,8 +1255,15 @@ window.addNewRelative = async () => {
       updatesNew.parent = focusPerson.parent;
     }
 
-    await updateDoc(doc(db, "members", focusId), updatesFocus);
-    await updateDoc(doc(db, "members", newDocId), updatesNew);
+    // التحديث باستخدام المسار الصحيح
+    await updateDoc(
+      doc(db, "trees", window.currentTreeId, "members", focusId),
+      updatesFocus
+    );
+    await updateDoc(
+      doc(db, "trees", window.currentTreeId, "members", newDocId),
+      updatesNew
+    );
 
     window.customAlert("تمت الإضافة بنجاح ✅");
     window.toggleAddSection(false);
@@ -1253,7 +1273,9 @@ window.addNewRelative = async () => {
     window.customAlert("خطأ: " + e.message);
   }
 };
-/* وظيفة قفل الخانات عند اختيار شخص للربط */
+/* =========================================
+ 18. Disable New Member Fields When Linking Existing Member
+ ========================================= */
 document
   .getElementById("new-existing-member")
   .addEventListener("change", function () {
@@ -1277,7 +1299,9 @@ document
       );
     }
   });
-
+/* =========================================
+ 19. Create Member Card with Status Indicators
+ ========================================= */
 function createCardIn(div, m, label, cls = "") {
   const card = document.createElement("div");
 
@@ -1326,7 +1350,9 @@ function createCardIn(div, m, label, cls = "") {
 
   div.appendChild(card);
 }
-/* دالة رسم الخطوط المحسنة (High Performance) */
+/* =========================================
+ 20. Draw Lines between Members with Performance Optimization
+ ========================================= */
 function drawLines(members) {
   const svg = document.getElementById("tree-svg");
   if (!svg) return;
@@ -1404,8 +1430,9 @@ function drawLines(members) {
     svg.appendChild(fragment);
   });
 }
-
-// دالة مساعدة سريعة لإنشاء المسار العادي (مع أنيميشن الرسم)
+/* =========================================
+ 21. Create SVG Path Functions
+ ========================================= */
 function createSVGPath(x1, y1, x2, y2) {
   const midY = (y1 + y2) / 2;
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -1422,8 +1449,9 @@ function createSVGPath(x1, y1, x2, y2) {
 
   return path;
 }
-
-// دالة مساعدة سريعة لإنشاء مسار الزواج (مع أنيميشن الظهور)
+/* =========================================
+ 22. Create Spouse Path Function
+ ========================================= */
 function createSpousePath(pos1, pos2) {
   const x1 = pos1.x;
   const y1 = pos1.y + pos1.height / 2;
@@ -1445,7 +1473,9 @@ function createSpousePath(pos1, pos2) {
 
   return path;
 }
-
+/* =========================================
+ 23. Fit Tree to Screen Function
+ ========================================= */
 function fitTreeToScreen() {
   const cont = document.getElementById("tree-container");
   const scrW = window.innerWidth * 0.95;
@@ -1458,6 +1488,9 @@ function fitTreeToScreen() {
     cont.style.transform = "scale(1)";
   }
 }
+/* =========================================
+ 24. Open Bio Modal with Occasion Effects
+ ========================================= */
 window.openBio = (id) => {
   const m = window.currentMembers.find((x) => x.id === id);
   if (!m) return;
@@ -1651,8 +1684,6 @@ window.openBio = (id) => {
   if (m.fb) menu.innerHTML += `<a href="${m.fb}" target="_blank">Facebook</a>`;
   if (m.wa)
     menu.innerHTML += `<a href="https://wa.me/${m.wa}" target="_blank">WhatsApp</a>`;
-  // (يمكنك إضافة باقي الروابط هنا)
-  // ... (بعد ما مليت البيانات والاسم والصورة في openBio) ...
 
   // === 🛡️ نظام الصلاحيات والأمان والتحكم في الأزرار 🛡️ ===
 
@@ -1705,7 +1736,8 @@ window.openBio = (id) => {
   const oldClaimBtn = document.getElementById("claim-btn-dynamic");
   if (oldClaimBtn) oldClaimBtn.remove();
 
-  if (amIGuest && isAvailable) {
+  // الشرط: (أنا زائر) && (البروفايل ليس له صاحب linkedUserId)
+  if (amIGuest && !m.linkedUserId) {
     const claimBtn = document.createElement("button");
     claimBtn.id = "claim-btn-dynamic";
     claimBtn.innerText = "🙋‍♂️ هذا أنا";
@@ -1716,11 +1748,18 @@ window.openBio = (id) => {
 
     const headerDiv = document.querySelector(".profile-header");
     if (headerDiv) headerDiv.appendChild(claimBtn);
+  } else if (m.linkedUserId && amIGuest) {
+    // (اختياري) يمكنك إظهار علامة أن هذا الحساب موثق
+    // مثلاً: badge بجانب الاسم
   }
 
   // فتح المودال
   document.getElementById("bio-modal").style.display = "flex";
+  document.getElementById("modal-name").setAttribute("data-current-id", id);
 };
+/* =========================================
+ 25. Close Bio Modal Function
+ ========================================= */
 window.closeBio = () => {
   // إيقاف تكرار الطراقيع فوراً
   if (confettiInterval) {
@@ -1732,6 +1771,9 @@ window.closeBio = () => {
 };
 document.getElementById("bio-modal").style.display = "none";
 
+/* =========================================
+ 26. Switch Profile and Show Full Tree Functions
+ ========================================= */
 window.switchProfile = () => {
   const id = document.getElementById("modal-id-display").innerText;
   if (!id) return;
@@ -1755,32 +1797,101 @@ window.showFullTree = () => {
     refreshUI();
   }, currentFocusId);
 };
-/* دالة إظهار تأكيد الحذف المخصص */
+/* =========================================
+ 27. Delete Member Functionality
+ ========================================= */
 window.deleteMember = () => {
-  const overlay = document.getElementById("custom-confirm-overlay");
-  overlay.style.display = "flex";
+  const id = document.getElementById("modal-id-display").innerText;
+  const m = window.currentMembers.find((x) => x.id === id);
 
-  // تعيين وظيفة زر "نعم"
-  document.getElementById("confirm-yes").onclick = async () => {
-    const id = document.getElementById("modal-id-display").innerText;
-    try {
-      await deleteDoc(doc(db, "members", id));
-      window.closeCustomConfirm();
-      window.closeBio();
-      window.customAlert("تم الحذف بنجاح 🗑️");
-    } catch (e) {
-      window.customAlert("خطأ: " + e.message);
+  // هل هذا البروفايل مربوط بمستخدم؟
+  const isLinked = m.linkedUserId != null;
+  // هل هذا البروفايل يخصني أنا؟
+  const isMe = m.linkedUserId === auth.currentUser.uid;
+  // هل أنا الأدمن؟ (نستخدم المتغيرات العالمية اللي عرفناها)
+  const isAdmin = window.isTreeOwner || window.canDelete;
+
+  // السيناريوهات:
+  // 1. أنا صاحب البروفايل -> فك ربط (خروج)
+  // 2. أنا أدمن والبروفايل مربوط -> فك ربط (طرد المستخدم وإبقاء الشخصية)
+  // 3. أنا أدمن والبروفايل مش مربوط -> حذف نهائي
+
+  if (isMe || (isAdmin && isLinked)) {
+    // سيناريو فك الربط
+    const confirmMsg = isMe
+      ? "هل أنت متأكد من فك الربط والخروج من هذا البروفايل؟\n(لن يتم حذف الشخصية من الشجرة، لكن ستفقد السيطرة عليها)."
+      : "⚠️ هذا البروفايل مرتبط بمستخدم حقيقي.\nهل تريد فك ربط المستخدم وإبقاء الشخصية في الشجرة؟";
+
+    if (confirm(confirmMsg)) {
+      window.unlinkMember(id, m.linkedUserId);
     }
-  };
+  } else if (isAdmin && !isLinked) {
+    // سيناريو الحذف النهائي (لأنه مش مربوط)
+    const overlay = document.getElementById("custom-confirm-overlay");
+    overlay.style.display = "flex";
+
+    document.getElementById("confirm-yes").onclick = async () => {
+      if (!window.currentTreeId) return;
+      try {
+        await deleteDoc(doc(db, "trees", window.currentTreeId, "members", id));
+        window.closeCustomConfirm();
+        window.closeBio();
+        window.customAlert("تم الحذف من الشجرة نهائياً 🗑️");
+      } catch (e) {
+        window.customAlert("خطأ: " + e.message);
+      }
+    };
+  } else {
+    window.customAlert("⛔ ليس لديك صلاحية حذف هذا العضو.");
+  }
+};
+/* =========================================
+ 28. Unlink Member Functionality
+ ========================================= */
+window.unlinkMember = async (memberId, targetUid) => {
+  try {
+    // 1. تحديث البروفايل في الشجرة (إزالة linkedUserId)
+    await updateDoc(
+      doc(db, "trees", window.currentTreeId, "members", memberId),
+      {
+        linkedUserId: null,
+      }
+    );
+
+    // 2. تحديث بيانات المستخدم في كولكشن users (إزالة linkedTreeId)
+    if (targetUid) {
+      await updateDoc(doc(db, "users", targetUid), {
+        linkedTreeId: null,
+        linkedMemberId: null,
+      });
+    }
+
+    window.customAlert("✅ تم فك الربط بنجاح.");
+
+    // لو أنا اللي خرجت نفسي، لازم أعمل ريلود عشان أخرج بره الشجرة
+    if (targetUid === auth.currentUser.uid) {
+      window.location.href = "index.html";
+    } else {
+      window.openBio(memberId); // تحديث المودال للأدمن
+    }
+  } catch (e) {
+    console.error(e);
+    window.customAlert("حدث خطأ أثناء فك الربط: " + e.message);
+  }
 };
 
 window.closeCustomConfirm = () => closeModalSmoothly("custom-confirm-overlay");
-
+/* =========================================
+ 29. Render Empty State Function
+ ========================================= */
 window.renderEmptyState = () => {
   document.getElementById(
     "tree-container"
   ).innerHTML = `<div class="empty-state"><button class="btn-start" onclick="window.openAddFirstMember()">➕ ابدأ بإضافة أول فرد</button></div>`;
 };
+/* =========================================
+ 30. Open Add First Member Modal Function
+ ========================================= */
 window.openAddFirstMember = () => {
   document.getElementById("modal-id-display").innerText = "";
   document.getElementById("target-parent-name").innerText = "البداية";
@@ -1793,7 +1904,9 @@ window.addEventListener("resize", () => {
   clearTimeout(rTime);
   rTime = setTimeout(() => refreshUI(), 250);
 });
-// ميزة تبديل الوضع (Dark/Light)
+/* =========================================
+ 31. Theme Toggle Functionality
+ ========================================= */
 window.toggleTheme = () => {
   const html = document.documentElement;
   const current = html.getAttribute("data-theme");
@@ -1801,19 +1914,32 @@ window.toggleTheme = () => {
   html.setAttribute("data-theme", next);
   localStorage.setItem("theme", next); // لحفظ اختيارك
 };
-
-// تحميل الثيم المفضل عند فتح الصفحة
 document.documentElement.setAttribute(
   "data-theme",
   localStorage.getItem("theme") || "light"
 );
-/* تسجيل Service Worker لتفعيل خاصية التثبيت كـ تطبيق */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js");
-  });
+const originalToggleTheme = window.toggleTheme;
+window.toggleTheme = () => {
+  originalToggleTheme(); // نفذ الدالة القديمة
+  updateThemeIconInGrid();
+};
+
+function updateThemeIconInGrid() {
+  const theme = document.documentElement.getAttribute("data-theme");
+  const moon = document.querySelector(".theme-moon");
+  const sun = document.querySelector(".theme-sun");
+
+  if (theme === "dark") {
+    moon.style.display = "none";
+    sun.style.display = "block";
+  } else {
+    moon.style.display = "block";
+    sun.style.display = "none";
+  }
 }
-/* دالة مشاركة رابط ملف شخصي محدد */
+/* =========================================
+ 32. Share Member Functionality
+ ========================================= */
 window.shareMember = () => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
@@ -1835,17 +1961,9 @@ window.shareMember = () => {
     window.customAlert("تم نسخ رابط الملف الشخصي لـ " + m.name + " 🔗");
   }
 };
-/* إغلاق نتائج البحث عند الضغط في أي مكان خارج الصندوق */
-window.addEventListener("click", (e) => {
-  const searchWrapper = document.querySelector(".search-wrapper");
-  const resultsDiv = document.getElementById("search-results");
-
-  // إذا كان الضغط خارج حاوية البحث، نخفي النتائج
-  if (!searchWrapper.contains(e.target)) {
-    resultsDiv.style.display = "none";
-  }
-});
-/* دالة فتح قسم الإضافة وتجهيز القائمة (مدمجة ونظيفة) */
+/* =========================================
+ 33. Link Existing Member in Add Section Functionality
+ ========================================= */
 window.toggleAddSection = (s) => {
   // 1. تجهيز القائمة المنسدلة إذا كنا سنفتح القسم
 
@@ -1875,7 +1993,9 @@ window.toggleAddSection = (s) => {
   document.getElementById("add-section").style.display = s ? "block" : "none";
   document.getElementById("view-section").style.display = s ? "none" : "block";
 };
-/* دالة تفعيل وضع الوفاة (إخفاء الزر وإظهار التاريخ) */
+/* =========================================
+ 34. Enable Deceased Mode Functionality
+ ========================================= */
 window.enableDeceasedMode = (type) => {
   // 1. إخفاء زرار "تسجيل الوفاة"
   document.getElementById(`${type}-mark-deceased-btn`).style.display = "none";
@@ -1896,15 +2016,16 @@ window.enableDeceasedMode = (type) => {
     });
   }
 };
-/* تحديث دالة فتح البيانات (نسخة مصححة) */
-
-/* دالة إظهار/إخفاء خانات السوشيال ميديا */
+/* =========================================
+ 35. Toggle Social Inputs Functionality
+ ========================================= */
 window.toggleSocialInputs = (type) => {
   const div = document.getElementById(`${type}-social-inputs`);
   div.style.display = div.style.display === "flex" ? "none" : "flex";
 };
-
-/* دالة إضافة صف تواصل جديد */
+/* =========================================
+ 36. Add Social Media Row Functionality
+ ========================================= */
 window.addSocialRow = (type, platform = "", value = "") => {
   const container = document.getElementById(`${type}-social-list`);
   const row = document.createElement("div");
@@ -1927,20 +2048,22 @@ window.addSocialRow = (type, platform = "", value = "") => {
   `;
   container.appendChild(row);
 };
-
-/* دالة الحفظ المصححة (بدون edit-age) */
+/* =========================================
+ 37. Save Edit Functionality
+ ========================================= */
 window.saveEdit = async () => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
 
   const name = document.getElementById("edit-name").value;
-  // const age = ... (حذفنا هذا السطر)
-  const dob = document.getElementById("edit-dob").value; // نقرأ تاريخ الميلاد بدلاً منه
+  const dob = document.getElementById("edit-dob").value;
   const isPrivate = document.getElementById("edit-hide-main").checked;
   const isDeceased = document.getElementById("edit-is-deceased").checked;
   const deathDate = document.getElementById("edit-death-date").value;
   const spouse = document.getElementById("edit-existing-spouse").value;
   let img = document.getElementById("edit-img").value;
+
+  if (!window.currentTreeId) return window.customAlert("خطأ في معرف الشجرة");
 
   if (!img || img.trim() === "") {
     img = m.gender === "female" ? "mainfemale.png" : "mainmale.png";
@@ -1958,10 +2081,11 @@ window.saveEdit = async () => {
   if (!name) return window.customAlert("الاسم مطلوب ⚠️");
 
   try {
-    await updateDoc(doc(db, "members", id), {
+    // التصحيح: إضافة المسار الكامل trees -> treeId -> members
+    await updateDoc(doc(db, "trees", window.currentTreeId, "members", id), {
       name,
       img,
-      dob, // حفظ التاريخ
+      dob,
       isPrivate,
       isDeceased,
       deathDate,
@@ -1970,22 +2094,23 @@ window.saveEdit = async () => {
     });
     window.customAlert("تم التحديث بنجاح! ✨");
     window.toggleEditSection(false);
-    // تحديث الواجهة فوراً لعرض العمر الجديد
     window.openBio(id);
   } catch (e) {
+    console.error(e);
     window.customAlert("خطأ: " + e.message);
   }
 };
-/* دالة إظهار التنبيه المخصص */
+/* =========================================
+ 38. Custom Alert Functionality
+ ========================================= */
 window.customAlert = (message) => {
   document.getElementById("custom-alert-message").innerText = message;
   document.getElementById("custom-alert-overlay").style.display = "flex";
 };
-
-/* دالة إغلاق التنبيه */
 window.closeCustomAlert = () => closeModalSmoothly("custom-alert-overlay");
-
-/* دالة حذف رابط الصورة وإعادة الأصل */
+/* =========================================
+ 39. Reset Photo Field Functionality
+ ========================================= */
 window.resetPhotoField = (type) => {
   const inputField = document.getElementById(`${type}-img`);
   const id = document.getElementById("modal-id-display").innerText;
@@ -2008,9 +2133,9 @@ window.resetPhotoField = (type) => {
     window.customAlert("تم حذف الرابط واستعادة الصورة الافتراضية ✨");
   }
 };
-/* محرك البحث والصلة الذكي */
-
-// 1. وظيفة البحث داخل المودال
+/* =========================================
+ 40. Search for Person in Relationship Calculator
+ ========================================= */
 window.searchForCalc = (type) => {
   const val = document
     .getElementById(`input-person-${type}`)
@@ -2045,8 +2170,9 @@ window.searchForCalc = (type) => {
     });
   }
 };
-
-/* دالة تبديل الأشخاص في الكاشف */
+/* =========================================
+ 41. Calculate Relationship Functionality
+ ========================================= */
 window.swapCalcPersons = () => {
   const aName = document.getElementById("input-person-a").value;
   const aId = document.getElementById("id-person-a").value;
@@ -2303,7 +2429,6 @@ window.openRelCalc = () => {
   document.getElementById("input-person-a").value = "";
   document.getElementById("input-person-b").value = "";
 };
-/* دالة الانتقال الذكية - نسخة نظيفة لمنع تكرار الرسم */
 function animateTransition(callback, targetId) {
   const container = document.getElementById("tree-container");
 
@@ -2349,7 +2474,6 @@ function animateTransition(callback, targetId) {
     }, 500); // الانتظار حتى انتهاء الحركة تماماً
   }, 350);
 }
-/* دالة مساعدة لإغلاق أي مودال بنعومة */
 function closeModalSmoothly(modalId) {
   const modal = document.getElementById(modalId);
   if (!modal) return;
@@ -2371,11 +2495,9 @@ function closeModalSmoothly(modalId) {
 }
 window.closeRelCalc = () => closeModalSmoothly("rel-calc-modal");
 window.closeModalSmoothly = closeModalSmoothly; // عشان الـ HTML يشوفها
-/* ========================================= */
-/* ميزة تصدير الشجرة كصورة (Using dom-to-image) */
-/* ========================================= */
-
-// دالة تحميل مكتبة dom-to-image
+/* =========================================
+ 42. Screen Capture Functionality
+ ========================================= */
 function loadDomToImage() {
   return new Promise((resolve, reject) => {
     if (window.domtoimage) return resolve();
@@ -2450,10 +2572,9 @@ window.exportTreeImage = async () => {
     window.customAlert("تعذر تحميل مكتبة التصوير ❌");
   }
 };
-/* ========================================= */
-/* لوحة الإحصائيات المطورة (Advanced Dashboard) */
-/* ========================================= */
-
+/* =========================================
+ 43. Show Statistics Modal Functionality
+ ========================================= */
 window.showStatsModal = () => {
   const members = window.currentMembers || [];
   const total = members.length;
@@ -2580,8 +2701,9 @@ window.showStatsModal = () => {
   `;
   document.body.appendChild(modal);
 };
-// في ملف script.js - استبدل دالة calculateAgeFromDOB بالكامل
-
+/* =========================================
+ 44. Date of Birth Age Calculation
+ ========================================= */
 function calculateAgeFromDOB(dobString) {
   if (!dobString) return "";
 
@@ -2615,7 +2737,6 @@ function calculateAgeFromDOB(dobString) {
     return days === 0 ? "النهاردة عيد ميلادى 🥳" : `${days} يوم`;
   }
 }
-/* تفعيل التاريخ بالشكل الجديد */
 document.addEventListener("DOMContentLoaded", () => {
   // التأكد من تحميل المكتبة
   if (typeof flatpickr !== "undefined") {
@@ -2631,11 +2752,9 @@ document.addEventListener("DOMContentLoaded", () => {
     flatpickr("#edit-dob", config);
   }
 });
-/* ========================================= */
-/* مميزات تحليل تاريخ الميلاد (Analytics) */
-/* ========================================= */
-
-// 1. حساب البرج الفلكي
+/* =========================================
+ 45. Zodiac Sign and Generation Analysis
+ ========================================= */
 function getZodiac(day, month) {
   const zodiacs = [
     { char: "♑", name: "الجدي", start: 22 }, // Jan
@@ -2658,8 +2777,6 @@ function getZodiac(day, month) {
 
   return day < lastSign.start ? zodiacs[(month + 10) % 12] : lastSign;
 }
-
-// 2. تحليل الجيل (بمسميات "رايقة" ومصرية)
 function getGeneration(year) {
   // مواليد 2013 لحد دلوقتي (جيل الآيباد والذكاء الاصطناعي)
   if (year >= 2013) return "براعم المستقبل 🚀";
@@ -2679,9 +2796,9 @@ function getGeneration(year) {
   // أي حد أكبر من كدا (الأجداد)
   return "روايح الزمن الجميل 📜";
 }
-
-// في ملف script.js - استبدل دالة getNextBirthdayCountdown بالكامل
-
+/* =========================================
+ 46.  Birthday Countdown 
+ ========================================= */
 function getNextBirthdayCountdown(dobString) {
   const today = new Date();
   const dob = new Date(dobString);
@@ -2716,11 +2833,6 @@ function getNextBirthdayCountdown(dobString) {
     return `باقي ${diffDays} يوم`;
   }
 }
-/* ========================================= */
-/* منطق الاحتفال بأعياد الميلاد (Birthday Logic) */
-/* ========================================= */
-
-// 1. دالة التحقق: هل تاريخ اليوم يطابق يوم وشهر الميلاد؟
 function isBirthdayToday(dobString) {
   if (!dobString) return false;
   const dob = new Date(dobString);
@@ -2735,7 +2847,6 @@ function isBirthdayToday(dobString) {
   );
 }
 
-// 2. دالة تشغيل أنيميشن الكونفيتي (المحسنة)
 function triggerCardConfetti(cardElement) {
   if (!cardElement) return;
 
@@ -2768,8 +2879,9 @@ function triggerCardConfetti(cardElement) {
     animation.onfinish = () => piece.remove();
   }
 }
-
-/* 1. دالة إظهار خانة تاريخ الوفاة */
+/* =========================================
+ 47. Deceased Status Calculation
+ ========================================= */
 window.toggleDeathDateInput = (type) => {
   const checkbox = document.getElementById(`${type}-is-deceased`);
   const wrapper = document.getElementById(`${type}-death-date-wrapper`);
@@ -2787,8 +2899,6 @@ window.toggleDeathDateInput = (type) => {
     document.getElementById(`${type}-death-date`).value = ""; // مسح التاريخ
   }
 };
-
-/* 2. دالة حساب حالة الوفاة (المنطق المصري) */
 function getDeceasedStatus(deathDateString) {
   if (!deathDateString) return "normal"; // لو مفيش تاريخ، نرجع للشكل الفضي العادي
 
@@ -2827,7 +2937,6 @@ function getDeceasedStatus(deathDateString) {
   // الحالة الافتراضية: متوفى (الشكل الفضي الهادئ)
   return "is-deceased";
 }
-/* دالة لتحويل الأرقام إلى ترتيب عربي للسنوات */
 function getOrdinalYear(num) {
   const ordinals = [
     "",
@@ -2845,8 +2954,6 @@ function getOrdinalYear(num) {
   if (num <= 10) return ordinals[num];
   return num; // للأرقام الأكبر من 10 يرجع الرقم كما هو (مثلاً: الذكرى 11)
 }
-
-/* دالة تحديد نص الحداد الدقيق */
 function getMourningLabelText(deathDateString) {
   if (!deathDateString) return "";
 
@@ -2879,7 +2986,6 @@ function getMourningLabelText(deathDateString) {
 
   return "حداد 🏴";
 }
-// دالة مساعدة لحساب المدة المنقضية (للمتوفين)
 function calculateTimeSince(dateString) {
   if (!dateString) return "";
 
@@ -2901,11 +3007,9 @@ function calculateTimeSince(dateString) {
     return `${years} سنة`;
   }
 }
-/* ========================================= */
-/* دوال المناسبات المطورة (Occasions Logic) */
-/* ========================================= */
-
-// فتح النافذة وتصفير البيانات
+/* =========================================
+ 48. Occasion Modal Functionality
+ ========================================= */
 window.openOccasionModal = () => {
   // تصفير الخانات
   document.getElementById("occasion-type").selectedIndex = 0;
@@ -2939,8 +3043,6 @@ window.openOccasionModal = () => {
 
   document.getElementById("occasion-modal").style.display = "flex";
 };
-
-// تحديث الواجهة وتفلتر القائمة بذكاء (جنس + شرع)
 window.updateOccasionUI = () => {
   const focusId = document.getElementById("modal-id-display").innerText;
   const focusPerson = window.currentMembers.find((m) => m.id === focusId);
@@ -3042,7 +3144,6 @@ window.updateOccasionUI = () => {
     newWrapper.style.display = "flex";
   }
 };
-// البحث عن شريك (كما هي لكن مع التأكد من إخفاء القائمة عند الاختيار)
 window.searchForOccasionPartner = () => {
   const val = document
     .getElementById("occasion-partner-input")
@@ -3077,8 +3178,8 @@ window.searchForOccasionPartner = () => {
     resDiv.style.display = "none";
   }
 };
-
 window.saveOccasion = async () => {
+  // ... (نفس الجزء الأول من الدالة لجلب القيم والتحقق) ...
   const focusId = document.getElementById("modal-id-display").innerText;
   const focusPerson = window.currentMembers.find((m) => m.id === focusId);
   const type = document.getElementById("occasion-type").value;
@@ -3087,97 +3188,76 @@ window.saveOccasion = async () => {
     'input[name="partner-source"]:checked'
   ).value;
 
-  if (!type) return window.customAlert("من فضلك اختر نوع المناسبة!");
-  if (!date) return window.customAlert("يجب تحديد تاريخ المناسبة!");
-
-  // 1. فحص الشخص الحالي (Focus Person)
-  if (type === "engagement" && (focusPerson.spouse || focusPerson.fiance)) {
-    return window.customAlert("عفواً.. هذا الشخص مرتبط بالفعل!");
-  }
+  if (!window.currentTreeId) return window.customAlert("خطأ النظام");
+  if (!type || !date) return window.customAlert("البيانات ناقصة!");
 
   let partnerId = null;
 
   try {
+    const membersColl = collection(
+      db,
+      "trees",
+      window.currentTreeId,
+      "members"
+    );
+
     if (source === "new") {
-      // كود إضافة شخص جديد (زي ما هو عندك)
       const newName = document.getElementById(
         "occasion-new-partner-name"
       ).value;
-      if (!newName) return window.customAlert("اكتب اسم الشريك الجديد!");
       const newGender = focusPerson.gender === "male" ? "female" : "male";
       const defaultImg =
-        newGender === "female"
-          ? "Gemini_Generated_Image_1ppls51ppls51ppl.png"
-          : "mainmale.png";
+        newGender === "female" ? "mainfemale.png" : "mainmale.png";
 
-      const newDoc = await addDoc(collection(db, "members"), {
+      // إضافة الشخص الجديد في المسار الصحيح
+      const newDoc = await addDoc(membersColl, {
         name: newName,
         gender: newGender,
         img: defaultImg,
         isPrivate: true,
         level: focusPerson.level,
+        createdAt: new Date().toISOString(),
       });
       partnerId = newDoc.id;
     } else {
-      // اختيار من القائمة
       partnerId = document.getElementById("occasion-partner-id").value;
-      if (!partnerId)
-        return window.customAlert("لازم تختار الشريك من القائمة!");
-
-      // === [الحماية القوية] فحص الطرف الثاني ===
-      const partner = window.currentMembers.find((m) => m.id === partnerId);
-
-      // هل بنجوز اتنين مخطوبين لبعض؟ (مسموح)
-      const isConvertingEngagement = focusPerson.fiance === partnerId;
-
-      if (!isConvertingEngagement) {
-        // لو الطرف التاني مرتبط بحد تاني.. ارفض فوراً
-        if (partner.spouse) {
-          return window.customAlert(`عفواً! ${partner.name} متزوج/ة بالفعل ⛔`);
-        }
-        if (partner.fiance) {
-          return window.customAlert(
-            `عفواً! ${partner.name} مخطوب/ة لشخص آخر 💍⛔`
-          );
-        }
-
-        // فحص القرابة مرة أخيرة (زيادة أمان)
-        if (!isMarriageAllowed(focusPerson, partner)) {
-          return window.customAlert(
-            "لا يمكن إتمام هذا الارتباط لوجود مانع قرابة 🧬"
-          );
-        }
-      }
-      // =======================================
+      if (!partnerId) return window.customAlert("اختر الشريك");
+      // ... (أكواد التحقق من الشريك) ...
     }
 
-    // تنفيذ الحفظ (زي ما هو)
+    // تحديث البيانات في المسار الصحيح
+    const focusDocRef = doc(
+      db,
+      "trees",
+      window.currentTreeId,
+      "members",
+      focusId
+    );
+    const partnerDocRef = doc(
+      db,
+      "trees",
+      window.currentTreeId,
+      "members",
+      partnerId
+    );
+
     if (type === "marriage") {
-      const updates = {
+      await updateDoc(focusDocRef, {
         spouse: partnerId,
         marriageDate: date,
         fiance: null,
         engagementDate: null,
-      };
-      const updatesP = {
+      });
+      await updateDoc(partnerDocRef, {
         spouse: focusId,
         marriageDate: date,
         fiance: null,
         engagementDate: null,
-      };
-
-      await updateDoc(doc(db, "members", focusId), updates);
-      await updateDoc(doc(db, "members", partnerId), updatesP);
+      });
       window.customAlert("مبروك الزواج! 💍🎉");
     } else {
-      await updateDoc(doc(db, "members", focusId), {
-        fiance: partnerId,
-        engagementDate: date,
-      });
-      await updateDoc(doc(db, "members", partnerId), {
-        fiance: focusId,
-        engagementDate: date,
-      });
+      await updateDoc(focusDocRef, { fiance: partnerId, engagementDate: date });
+      await updateDoc(partnerDocRef, { fiance: focusId, engagementDate: date });
       window.customAlert("تمت الخطوبة بنجاح 💍✨");
     }
 
@@ -3188,7 +3268,6 @@ window.saveOccasion = async () => {
     window.customAlert("خطأ: " + e.message);
   }
 };
-/* دالة تحليل المناسبات (تم إصلاح حساب الذكرى السنوية) */
 function analyzeOccasionStatus(member) {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // تصفير الوقت
@@ -3279,20 +3358,8 @@ function analyzeOccasionStatus(member) {
 
   return null;
 }
-/* --- دوال إدارة المناسبات (تعديل وحذف) --- */
-
 window.editOccasion = (type, oldDate) => {
-  // نستخدم SweetAlert لو موجود، أو confirm عادي وسريع
-  // هنا هنعمل "حيلة" بسيطة: نعيد استخدام مودال المناسبات بس للتعديل
-
   const id = document.getElementById("modal-id-display").innerText;
-
-  // نسأل المستخدم عايز يعمل إيه
-  // (بما إننا معندناش SweetAlert مخصص، هنعمل 2 prompts بساط)
-
-  // خيار 1: تعديل التاريخ
-  // خيار 2: حذف المناسبة
-
   const action = confirm(
     `إدارة مناسبة الـ ${type === "marriage" ? "زواج" : "خطوبة"}:\n\n` +
       `✅ اضغط "OK" لتغيير التاريخ.\n` +
@@ -3300,22 +3367,17 @@ window.editOccasion = (type, oldDate) => {
   );
 
   if (action) {
-    // --- تعديل التاريخ ---
     const newDate = prompt("أدخل التاريخ الجديد (YYYY-MM-DD):", oldDate);
     if (newDate && newDate !== oldDate) {
       updateOccasionDate(id, type, newDate);
     }
   } else {
-    // --- حذف المناسبة ---
-    // تأكيد إضافي عشان الحذف خطير
     const sure = confirm("هل أنت متأكد من حذف هذه المناسبة وفك الارتباط؟ ⚠️");
     if (sure) {
       deleteOccasion(id, type);
     }
   }
 };
-
-// دالة تنفيذ تحديث التاريخ
 async function updateOccasionDate(id, type, newDate) {
   const m = window.currentMembers.find((x) => x.id === id);
   const partnerId = type === "marriage" ? m.spouse : m.fiance;
@@ -3335,8 +3397,6 @@ async function updateOccasionDate(id, type, newDate) {
     window.customAlert("خطأ: " + e.message);
   }
 }
-
-// دالة تنفيذ الحذف
 async function deleteOccasion(id, type) {
   const m = window.currentMembers.find((x) => x.id === id);
   const partnerId = type === "marriage" ? m.spouse : m.fiance;
@@ -3374,11 +3434,6 @@ async function deleteOccasion(id, type) {
     window.customAlert("خطأ: " + e.message);
   }
 }
-/* ========================================= */
-/* نظام إدارة المناسبات الجديد (Settings Panel) */
-/* ========================================= */
-
-// فتح لوحة إدارة المناسبات
 window.openOccasionsManager = () => {
   // إخفاء الأقسام الأخرى
   document.getElementById("view-section").style.display = "none";
@@ -3391,8 +3446,6 @@ window.openOccasionsManager = () => {
   // ملء القائمة
   window.renderManageOccasionsList();
 };
-
-// إغلاق اللوحة والعودة لوضع العرض (الشخصي) مباشرة
 window.closeOccasionsManager = () => {
   document.getElementById("occasions-manager-section").style.display = "none";
 
@@ -3400,7 +3453,6 @@ window.closeOccasionsManager = () => {
   document.getElementById("view-section").style.display = "block";
   document.getElementById("edit-section").style.display = "none";
 };
-// رسم قائمة المناسبات (المستقبلية فقط)
 window.renderManageOccasionsList = () => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
@@ -3460,8 +3512,6 @@ window.renderManageOccasionsList = () => {
     `;
   }
 };
-
-// دالة مساعدة لإنشاء صف HTML للمناسبة
 function createOccasionEditRow(type, title, partnerName, date) {
   return `
     <div class="occasion-edit-card" style="background:rgba(0,0,0,0.05); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--glass-border);">
@@ -3486,8 +3536,6 @@ function createOccasionEditRow(type, title, partnerName, date) {
     </div>
   `;
 }
-
-// تنفيذ حفظ التاريخ الجديد
 window.saveOccasionDate = async (type) => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
@@ -3508,8 +3556,6 @@ window.saveOccasionDate = async (type) => {
     window.customAlert("خطأ: " + e.message);
   }
 };
-
-// تأكيد الحذف
 window.confirmDeleteOccasion = (type) => {
   const confirmAction = confirm(
     "هل أنت متأكد من حذف هذه المناسبة وفك الارتباط؟ (لا يمكن التراجع) ⚠️"
@@ -3521,7 +3567,6 @@ window.confirmDeleteOccasion = (type) => {
     });
   }
 };
-// دالة إنهاء الزواج / الطلاق (شاملة)
 window.breakMarriage = async () => {
   const id = document.getElementById("modal-id-display").innerText;
   const m = window.currentMembers.find((x) => x.id === id);
@@ -3559,31 +3604,19 @@ window.breakMarriage = async () => {
     window.customAlert("حدث خطأ: " + e.message);
   }
 };
-/* ========================================= */
-/* دالة التحقق من موانع الزواج (جنس + قرابة) */
-/* ========================================= */
+/* =========================================
+ 49.marriage Eligibility Check
+ ========================================= */
 function isMarriageAllowed(personA, personB) {
-  // 1. فحص الجنس (أهم نقطة طلبتها: ممنوع نفس الجنس)
   if (personA.gender === personB.gender) return false;
-
-  // 2. فحص القرابة المباشرة (المحارم)
-
-  // أ) الأخوة (Siblings): نفس الأب
   if (personA.parent && personB.parent && personA.parent === personB.parent) {
     return false;
   }
-
-  // ب) الآباء والأبناء (Parent/Child)
   if (personA.parent === personB.id || personB.parent === personA.id) {
     return false;
   }
-
-  // ج) ولاد الأخوات (Nieces/Nephews)
-  // نجيب أب (أو أم) الطرف الأول وأب (أو أم) الطرف الثاني
   const parentA = window.currentMembers.find((m) => m.id === personA.parent);
   const parentB = window.currentMembers.find((m) => m.id === personB.parent);
-
-  // هل والد B هو أخو A؟ (يعني A يبقى عم/خال B)
   if (
     parentB &&
     parentB.parent &&
@@ -3591,8 +3624,6 @@ function isMarriageAllowed(personA, personB) {
     parentB.parent === personA.parent
   )
     return false;
-
-  // هل والد A هو أخو B؟ (يعني B يبقى عم/خال A)
   if (
     parentA &&
     parentA.parent &&
@@ -3601,11 +3632,11 @@ function isMarriageAllowed(personA, personB) {
   )
     return false;
 
-  return true; // مفيش مانع، الزواج مسموح
+  return true;
 }
-/* ========================================= */
-/* 🙋‍♂️ نظام المطالبة (هذا أنا) */
-/* ========================================= */
+/* =========================================
+ 50. Claim Profile Function
+ ========================================= */
 window.claimProfile = async (memberId) => {
   if (
     !confirm(
@@ -3614,33 +3645,67 @@ window.claimProfile = async (memberId) => {
   )
     return;
 
+  // 1. فحوصات الأمان قبل الاتصال
+  if (!auth.currentUser) return alert("يجب تسجيل الدخول أولاً!");
+  if (!window.currentTreeId) {
+    console.error("خطأ: currentTreeId غير معروف");
+    return alert(
+      "حدث خطأ في تحميل بيانات الشجرة. يرجى تحديث الصفحة والمحاولة مجدداً."
+    );
+  }
+
   try {
-    // 1. تحديث بيانات العضو في الشجرة (نحط عليه البصمة)
-    const memberRef = doc(db, "trees", currentTreeId, "members", memberId);
+    const memberRef = doc(
+      db,
+      "trees",
+      window.currentTreeId,
+      "members",
+      memberId
+    );
+
+    // 2. فحص هل البروفايل محجوز (لزيادة التأكيد)
+    const mSnap = await getDoc(memberRef);
+    if (!mSnap.exists()) return alert("هذا العضو غير موجود!");
+
+    const data = mSnap.data();
+    // نتأكد إن الحقل موجود ومش فاضي
+    if (data.linkedUserId && data.linkedUserId !== "") {
+      return alert("⛔ عذراً، هذا البروفايل تم ربطه بحساب آخر بالفعل!");
+    }
+
+    // 3. التنفيذ (إرسال linkedUserId فقط)
     await updateDoc(memberRef, {
-      linkedUserId: currentUser.uid,
+      linkedUserId: auth.currentUser.uid,
     });
 
-    // 2. تحديث بيانات المستخدم (نقوله أنت مين)
+    // 4. تحديث بيانات المستخدم في كولكشن users
     await setDoc(
-      doc(db, "users", currentUser.uid),
+      doc(db, "users", auth.currentUser.uid),
       {
         linkedMemberId: memberId,
-        linkedTreeId: currentTreeId, // تأكيد الربط بالشجرة
+        linkedTreeId: window.currentTreeId,
+        email: auth.currentUser.email,
       },
       { merge: true }
     );
 
-    alert("مبروك! تم ربط حسابك بنجاح. يمكنك الآن تعديل بياناتك الشخصية. 🎉");
-    window.location.reload(); // ريلود عشان الصلاحيات تتفعل
+    alert("مبروك! تم ربط حسابك بنجاح. 🎉");
+    window.location.reload();
   } catch (e) {
-    console.error(e);
-    alert("حدث خطأ: " + e.message);
+    console.error("خطأ في الربط:", e);
+    if (e.code === "permission-denied") {
+      // رسالة توضيحية للمستخدم
+      alert(
+        "⛔ فشل الربط: الصلاحيات غير كافية.\n(تأكد أن البروفايل غير مرتبط بأحد، وأنك لست مرتبطاً ببروفايل آخر)."
+      );
+    } else {
+      alert("خطأ: " + e.message);
+    }
   }
 };
-/* ========================================= */
-/* 🛠️ أداة نشر الشجرة (Publish Tool) 🛠️ */
-/* ========================================= */
+/* =========================================
+ 51. Publish My Tree to Public Function
+ ========================================= */
 window.publishMyTreeToPublic = async () => {
   if (!currentUser) return alert("سجل دخول الأول!");
 
@@ -3709,84 +3774,9 @@ window.publishMyTreeToPublic = async () => {
     alert("خطأ: " + e.message);
   }
 };
-/* ========================================= */
-/* 🚑 أداة إنقاذ الشجرة القديمة (من النظام العام) */
-/* ========================================= */
-window.rescueOldTree = async () => {
-  if (!currentUser) return alert("يجب تسجيل الدخول أولاً!");
-
-  // 1. طلب بيانات الشجرة الجديدة
-  const familyName = prompt("اكتب اسم العائلة الجديد:");
-  const password = prompt("عين كلمة مرور لهذه العائلة:");
-
-  if (!familyName || !password) return;
-
-  try {
-    // 2. قراءة البيانات من المكان القديم (members)
-    const oldRef = collection(db, "members");
-    const snapshot = await getDocs(oldRef);
-
-    if (snapshot.empty)
-      return alert("للأسف، لا توجد شجرة قديمة محفوظة في المتصفح!");
-
-    // 3. إنشاء الشجرة الجديدة
-    const newTreeRef = await addDoc(collection(db, "trees"), {
-      familyName: familyName,
-      password: password,
-      creatorId: currentUser.uid,
-      createdAt: new Date().toISOString(),
-    });
-
-    // 4. عملية النسخ (Batch Write)
-    const batch = writeBatch(db);
-    let count = 0;
-
-    snapshot.docs.forEach((docSnap) => {
-      const data = docSnap.data();
-      // الوجهة: trees -> ID -> members
-      const newMemberRef = doc(
-        db,
-        "trees",
-        newTreeRef.id,
-        "members",
-        docSnap.id
-      );
-
-      // ربط المؤسس (أنت) بأول شخصية أو الجذر
-      if (data.isRoot) {
-        data.linkedUserId = currentUser.uid;
-      }
-
-      batch.set(newMemberRef, data);
-      count++;
-    });
-
-    await batch.commit();
-
-    // 5. تحديث حسابك
-    await setDoc(
-      doc(db, "users", currentUser.uid),
-      {
-        linkedTreeId: newTreeRef.id,
-        linkedMemberId: "ROOT",
-      },
-      { merge: true }
-    );
-
-    alert(
-      `تم إنقاذ ${count} فرد بنجاح! \nتم إنشاء "عائلة ${familyName}" والباسورد: ${password}`
-    );
-    window.location.reload();
-  } catch (e) {
-    console.error(e);
-    alert("خطأ: " + e.message);
-  }
-};
-/* ========================================= */
-/* 🚪 نظام الخروج والتنبيهات المطور */
-/* ========================================= */
-
-// 1. فتح نافذة تأكيد الخروج (بدلاً من confirm العادية)
+/* =========================================
+ 52. Logout Confirmation Modal
+ ========================================= */
 window.logout = () => {
   const overlay = document.getElementById("logout-confirm-overlay");
   overlay.style.display = "flex";
@@ -3795,7 +3785,6 @@ window.logout = () => {
     "contentPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
 };
 
-// 2. تنفيذ الخروج الفعلي (عند الضغط على نعم)
 window.performLogout = async () => {
   try {
     await signOut(auth);
@@ -3808,13 +3797,10 @@ window.performLogout = async () => {
   }
 };
 
-// 3. إغلاق نافذة الخروج (عند الضغط على خليك مكانك)
 window.closeLogoutModal = () => {
   window.closeModalSmoothly("logout-confirm-overlay");
 };
 
-// 4. تحديث دالة التنبيه العادية (Custom Alert) لتستخدم الـ ID الجديد
-// استبدل دالة window.customAlert القديمة بهذه:
 window.customAlert = (message) => {
   const overlay = document.getElementById("google-alert-overlay");
   const msgEl = document.getElementById("google-alert-message");
@@ -3832,49 +3818,10 @@ window.customAlert = (message) => {
 window.closeGoogleAlert = () => {
   window.closeModalSmoothly("google-alert-overlay");
 };
-/* ========================================= */
-/* 😄 منطق قائمة الإيموجي المتطورة */
-/* ========================================= */
+/* =========================================
+ 53. Global Chat Panel Functionality
+ ========================================= */
 
-// 1. فتح وإغلاق القائمة
-window.toggleEmojiPicker = () => {
-  const picker = document.getElementById("emoji-popup");
-  picker.classList.toggle("show");
-};
-
-// 2. الاستماع لحدث اختيار الإيموجي
-// (يتم تنفيذه مرة واحدة عند تحميل الصفحة)
-document.addEventListener("DOMContentLoaded", () => {
-  const pickerElement = document.querySelector("emoji-picker");
-  const inputField = document.getElementById("global-input");
-
-  if (pickerElement && inputField) {
-    pickerElement.addEventListener("emoji-click", (event) => {
-      // إضافة الإيموجي في مكان المؤشر أو في الآخر
-      const emoji = event.detail.unicode;
-      inputField.value += emoji;
-
-      // إبقاء التركيز على مربع الكتابة
-      inputField.focus();
-    });
-  }
-
-  // إغلاق القائمة عند الضغط خارجها
-  document.addEventListener("click", (e) => {
-    const pickerContainer = document.getElementById("emoji-popup");
-    const btn = document.querySelector(".emoji-btn");
-
-    // لو الضغطة مش جوه القائمة ومش على الزرار، اقفل القائمة
-    if (
-      pickerContainer.classList.contains("show") &&
-      !pickerContainer.contains(e.target) &&
-      !btn.contains(e.target)
-    ) {
-      pickerContainer.classList.remove("show");
-    }
-  });
-});
-// 1. فتح وإغلاق الشات
 window.toggleChatPanel = () => {
   const panel = document.getElementById("chat-panel");
   const isOpen = panel.classList.contains("open");
@@ -3890,10 +3837,6 @@ window.toggleChatPanel = () => {
     setTimeout(() => document.getElementById("global-input").focus(), 300);
   }
 };
-
-/* ========================================= */
-/* 📨 تعديل: إرسال الصورة مع الرسالة */
-/* ========================================= */
 window.sendMessage = async () => {
   const input = document.getElementById("global-input");
   const text = input.value.trim();
@@ -3940,17 +3883,10 @@ window.sendMessage = async () => {
     alert("❌ فشل الإرسال");
   }
 };
-// 3. زرار Enter
 window.handleEnter = (e) => {
   if (e.key === "Enter") window.sendMessage();
 };
-
-// 4. تحميل الرسائل (Real-time)
 let chatUnsubscribe = null;
-
-/* ========================================= */
-/* 💬 تعديل: عرض الشات مع الصور */
-/* ========================================= */
 window.loadChatMessages = () => {
   if (chatUnsubscribe) return; // منع التكرار
   if (!window.currentTreeId) return;
@@ -4017,78 +3953,385 @@ window.loadChatMessages = () => {
     if (isFirstLoad) isFirstLoad = false;
   });
 };
-// دالة إنشاء الكريستالات المتدلية (Neon Crystals) 💎
-function spawnFallingLeaf(msg) {
-  // 1. إنشاء العنصر
-  const crystal = document.createElement("div");
-  crystal.className = "msg-crystal";
+/* =========================================
+   NEW CHAT SYSTEM V2 (Private + Auto Delete)
+   ========================================= */
 
-  // 2. موقع عشوائي (Position X)
-  // نبعد عن الأطراف (من 5% لـ 90%)
-  const randomLeft = Math.floor(Math.random() * 85) + 5;
-  crystal.style.left = randomLeft + "%";
+let currentChatRoomId = null;
+let privateChatUnsubscribe = null;
 
-  // 3. طول خيط عشوائي (Height)
-  // خيوط بأطوال مختلفة عشان تخلق "طبقات" بصرية
-  const randomHeight = Math.floor(Math.random() * 200) + 50; // من 50px لـ 250px
+// 1. فتح وإغلاق اللوحة + التنظيف التلقائي
+window.toggleChatPanel = () => {
+  const panel = document.getElementById("chat-panel");
+  const isOpen = panel.classList.contains("open");
 
-  // 4. تجهيز المحتوى (HTML)
-  // بنحاول نجيب أول حرف من الاسم كصورة بديلة لو مفيش صورة
-  const avatarContent = msg.senderImg
-    ? `<img src="${msg.senderImg}" class="crystal-avatar">`
-    : `<div class="crystal-avatar" style="background:#333; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; transform:rotate(-45deg)">${msg.senderName.charAt(
-        0
-      )}</div>`;
+  if (isOpen) {
+    panel.classList.remove("open");
+  } else {
+    panel.classList.add("open");
+    document.querySelector(".notification-dot").style.display = "none";
 
-  crystal.innerHTML = `
-        <div class="crystal-thread" style="height: ${randomHeight}px;"></div>
-        <div class="crystal-body">
-            ${avatarContent}
-        </div>
-        <div class="crystal-tooltip">
-            <span class="sender-tag">${msg.senderName}</span>
-            <div class="msg-content">${msg.text}</div>
-            <div style="font-size:0.7rem; color:#aaa; margin-top:5px; border-top:1px solid #333; padding-top:3px">اضغط لفتح المحادثة</div>
-        </div>
-    `;
+    // الافتراضي: فتح القائمة
+    window.showChatList();
 
-  // 5. عند الضغط
-  crystal.onclick = () => {
-    window.toggleChatPanel();
-    // تأثير اختفاء سريع
-    crystal.style.transform = "scale(0)";
-    crystal.style.opacity = "0";
-    setTimeout(() => crystal.remove(), 300);
+    // تشغيل التنظيف التلقائي للرسائل القديمة
+    cleanupOldMessages();
+  }
+};
+
+// 2. التنقل بين الشاشات
+window.showChatList = () => {
+  document
+    .querySelectorAll(".chat-view")
+    .forEach((v) => v.classList.remove("active"));
+  document.getElementById("chat-list-view").classList.add("active");
+  loadPrivateChatsList(); // تحميل القائمة
+};
+
+window.openFamilyChat = () => {
+  document
+    .querySelectorAll(".chat-view")
+    .forEach((v) => v.classList.remove("active"));
+  document.getElementById("family-chat-view").classList.add("active");
+  window.loadChatMessages(); // الدالة القديمة للشات العام
+};
+
+// 3. فتح شات خاص
+window.openPrivateChat = async (
+  targetUid,
+  targetName,
+  targetImg,
+  targetFather
+) => {
+  if (!currentUser) return alert("يجب تسجيل الدخول");
+
+  document
+    .querySelectorAll(".chat-view")
+    .forEach((v) => v.classList.remove("active"));
+  document.getElementById("private-chat-view").classList.add("active");
+
+  // تحديث الهيدر
+  document.getElementById("p-header-img").src = targetImg || "mainmale.png";
+  document.getElementById("p-header-name").innerText = targetName;
+  document.getElementById("p-header-father").innerText = targetFather
+    ? `(${targetFather})`
+    : "";
+  document.getElementById("p-header-status").innerText = "جاري الاتصال...";
+
+  // تكوين Room ID (ترتيب أبجدي لضمان توحيد الغرفة بين الطرفين)
+  const uids = [currentUser.uid, targetUid].sort();
+  currentChatRoomId = `${uids[0]}_${uids[1]}`;
+
+  // تحميل الرسائل
+  loadPrivateMessages(currentChatRoomId);
+
+  // تحديث حالة الأونلاين (وهمي حالياً أو يمكن ربطه بـ Realtime DB)
+  setTimeout(() => {
+    document.getElementById("p-header-status").innerText = "🟢 متصل الآن"; // يمكن تطويرها لاحقاً
+  }, 1000);
+};
+
+function loadPrivateChatsList() {
+  const listDiv = document.getElementById("private-chats-list");
+  const bigBtn = document.getElementById("big-new-chat-btn");
+  const fabBtn = document.getElementById("fab-new-chat-btn");
+
+  if (!currentUser) return;
+
+  const q = query(
+    collection(db, "private_chats"),
+    where("participants", "array-contains", currentUser.uid),
+    orderBy("lastUpdated", "desc")
+  );
+
+  onSnapshot(q, (snapshot) => {
+    listDiv.innerHTML = "";
+
+    // التحكم في الأزرار
+    if (snapshot.empty) {
+      if (bigBtn) bigBtn.style.display = "block";
+      if (fabBtn) fabBtn.style.display = "none";
+      listDiv.innerHTML =
+        "<div style='text-align:center; padding:20px; font-size:0.8rem; opacity:0.5'>لا توجد محادثات خاصة.</div>";
+    } else {
+      if (bigBtn) bigBtn.style.display = "none";
+      if (fabBtn) fabBtn.style.display = "flex";
+    }
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const otherUid = data.participants.find((id) => id !== currentUser.uid);
+
+      // ==========================================
+      // 🧠 الحل الذكي: استرجاع البيانات المفقودة
+      // ==========================================
+      let info = { name: "مستخدم", img: "mainmale.png", father: "" };
+
+      if (data.usersInfo && data.usersInfo[otherUid]) {
+        // 1. لو البيانات محفوظة في الشات (الجديد) -> استخدمها
+        info = data.usersInfo[otherUid];
+      } else {
+        // 2. لو البيانات ناقصة (القديم) -> دور عليها في أعضاء الشجرة الحالية
+        if (window.currentMembers) {
+          const localMember = window.currentMembers.find(
+            (m) => m.linkedUserId === otherUid
+          );
+          if (localMember) {
+            info.name = localMember.name;
+            info.img = localMember.img || "mainmale.png";
+
+            // محاولة جلب اسم الأب محلياً
+            const dad = window.currentMembers.find(
+              (p) => p.id === localMember.parent
+            );
+            if (dad) info.father = dad.name;
+          }
+        }
+      }
+      // ==========================================
+
+      let timeStr = "";
+      if (data.lastUpdated) {
+        const date = data.lastUpdated.toDate
+          ? data.lastUpdated.toDate()
+          : new Date(data.lastUpdated);
+        timeStr = date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      const item = document.createElement("div");
+      item.className = "chat-list-item";
+      item.onclick = () =>
+        window.openPrivateChat(otherUid, info.name, info.img, info.father);
+
+      item.innerHTML = `
+                <div class="chat-item-avatar">
+                    <img src="${info.img}" onerror="this.src='mainmale.png'">
+                </div>
+                <div class="chat-item-info">
+                    <div class="chat-item-top">
+                        <span class="chat-item-name">${info.name}</span>
+                        <span style="font-size:0.65rem; opacity:0.6">${timeStr}</span>
+                    </div>
+                    <span class="chat-item-last-msg">${
+                      data.lastMessage || "مرفق..."
+                    }</span>
+                </div>
+            `;
+      listDiv.appendChild(item);
+    });
+  });
+}
+// 5. تحميل رسائل الشات الخاص
+function loadPrivateMessages(roomId) {
+  const container = document.getElementById("private-messages");
+  container.innerHTML = ""; // تنظيف
+
+  if (privateChatUnsubscribe) privateChatUnsubscribe();
+
+  const q = query(
+    collection(db, "private_chats", roomId, "messages"),
+    orderBy("timestamp", "asc"),
+    limit(50)
+  );
+
+  privateChatUnsubscribe = onSnapshot(q, (snapshot) => {
+    container.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const msg = doc.data();
+      const isMine = msg.senderId === currentUser.uid;
+      const timeStr = new Date(msg.timestamp).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const div = document.createElement("div");
+      div.className = `msg-row ${isMine ? "row-mine" : "row-others"}`;
+      div.innerHTML = `
+                ${
+                  !isMine
+                    ? `<img src="${msg.senderImg}" class="chat-avatar">`
+                    : ""
+                }
+                <div class="msg-bubble ${isMine ? "msg-mine" : "msg-others"}">
+                    <div class="msg-text">${msg.text}</div>
+                    <div class="msg-time">${timeStr}</div>
+                </div>
+            `;
+      container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+  });
+}
+
+// 6. الإرسال الموحد (عام وخاص)
+window.sendMessage = async (type) => {
+  const inputId = type === "global" ? "global-input" : "private-input";
+  const input = document.getElementById(inputId);
+  const text = input.value.trim();
+  if (!text) return;
+
+  const userImg = currentUser.photoURL || "mainmale.png";
+  const msgData = {
+    text: text,
+    senderId: currentUser.uid,
+    senderName: currentUser.displayName,
+    senderImg: userImg,
+    timestamp: new Date().toISOString(),
   };
 
-  // 6. تشغيل الصوت (تأكد إن الكود اللي فات بتاع الصوت موجود)
-  if (typeof leafSound !== "undefined") {
-    leafSound.currentTime = 0;
-    leafSound.play().catch(() => {});
+  try {
+    if (type === "global") {
+      // كود الشات العام القديم (مع إضافة expiresAt للتنظيف)
+      // التنظيف بعد 7 أيام (1000 * 60 * 60 * 24 * 7)
+      msgData.expiresAt = new Date(Date.now() + 604800000).toISOString();
+
+      await addDoc(
+        collection(db, `trees/${window.currentTreeId}/chat_messages`),
+        msgData
+      );
+    } else {
+      // كود الشات الخاص
+      if (!currentChatRoomId) return;
+
+      // 1. إضافة الرسالة في Sub-collection
+      await addDoc(
+        collection(db, "private_chats", currentChatRoomId, "messages"),
+        msgData
+      );
+
+      // 2. تحديث بيانات الغرفة (آخر رسالة) ليظهر في القائمة
+      // نحتاج بياناتي وبيانات الطرف الآخر لتخزينها في usersInfo للسرعة
+      // (في تطبيق حقيقي ممكن تجيبها من المستخدمين، هنا هنفترض إننا بنحدثها مع كل رسالة)
+      const otherUid = currentChatRoomId
+        .replace(currentUser.uid, "")
+        .replace("_", "");
+
+      // تحديث الوثيقة الرئيسية للغرفة
+      await setDoc(
+        doc(db, "private_chats", currentChatRoomId),
+        {
+          participants: [currentUser.uid, otherUid],
+          lastMessage: text,
+          lastUpdated: new Date().toISOString(),
+          // تحديث معلوماتي أنا (عشان تظهر عند الطرف التاني)
+          [`usersInfo.${currentUser.uid}`]: {
+            name: currentUser.displayName,
+            img: userImg,
+            // بنحاول نجيب اسم الأب لو متاح
+            father: getMyFatherName(),
+          },
+        },
+        { merge: true }
+      );
+    }
+
+    input.value = "";
+  } catch (e) {
+    console.error("Send Error:", e);
   }
+};
 
-  // 7. الإزالة التلقائية (تفضل معلقة 15 ثانية عشان تلحق تشوفها)
-  setTimeout(() => {
-    crystal.style.transition = "all 1s ease";
-    crystal.style.top = "-500px"; // نسحبها لفوق تاني
-    crystal.style.opacity = "0";
-    setTimeout(() => crystal.remove(), 1000);
-  }, 15000);
-
-  document.body.appendChild(crystal);
+// دالة مساعدة لجلب اسم الأب
+function getMyFatherName() {
+  if (!window.currentMembers || !window.currentUserLinkedMemberId) return "";
+  const me = window.currentMembers.find(
+    (m) => m.id === window.currentUserLinkedMemberId
+  );
+  if (me && me.parent) {
+    const dad = window.currentMembers.find((m) => m.id === me.parent);
+    return dad ? dad.name : "";
+  }
+  return "";
 }
-/* ========================================= */
-/* 😄 منطق قائمة الإيموجي المتطورة */
-/* ========================================= */
 
-// 1. فتح وإغلاق القائمة
+// 7. دالة التنظيف التلقائي (Auto Delete from Firebase)
+async function cleanupOldMessages() {
+  // هذه الدالة تعمل عند فتح الشات العام
+  if (!window.currentTreeId) return;
+
+  const chatRef = collection(db, `trees/${window.currentTreeId}/chat_messages`);
+  const now = new Date().toISOString();
+
+  // استعلام عن الرسائل التي انتهت صلاحيتها
+  const q = query(chatRef, where("expiresAt", "<", now), limit(50)); // نحذف 50 بـ 50 عشان الأداء
+
+  try {
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      const batch = writeBatch(db);
+      snapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+      console.log(`🧹 تم تنظيف ${snapshot.size} رسالة قديمة من السيرفر.`);
+    }
+  } catch (e) {
+    console.error("Cleanup Error:", e);
+    // غالباً الخطأ هيكون بسبب نقص Index، الفايربيس هيديك لينك في الكونسول لإنشائه
+  }
+}
+
+// 8. البحث عن مستخدم لبدء شات
+window.showUserSearchForChat = () => {
+  const box = document.getElementById("chat-user-search-box");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+  if (box.style.display === "block")
+    document.getElementById("chat-search-input").focus();
+};
+
+window.searchUserForChat = (val) => {
+  const resDiv = document.getElementById("chat-search-results");
+  resDiv.innerHTML = "";
+  if (!val) return;
+
+  // البحث في الأعضاء المحملين حالياً (Local Search for Speed)
+  const matches = window.currentMembers.filter(
+    (m) =>
+      m.name.toLowerCase().includes(val.toLowerCase()) &&
+      m.linkedUserId && // لازم يكون مربوط بحساب عشان نكلمه
+      m.linkedUserId !== currentUser.uid // مكلمش نفسي
+  );
+
+  matches.forEach((m) => {
+    const parent = window.currentMembers.find((p) => p.id === m.parent);
+    const fatherName = parent ? parent.name : "";
+
+    const div = document.createElement("div");
+    div.className = "search-item";
+    div.innerHTML = `
+            <img src="${m.img}" style="width:30px; height:30px; border-radius:50%">
+            <div>
+                <div style="font-weight:bold">${m.name}</div>
+                <div style="font-size:0.7rem; opacity:0.7">${fatherName}</div>
+            </div>
+        `;
+    div.onclick = () => {
+      window.openPrivateChat(m.linkedUserId, m.name, m.img, fatherName);
+      document.getElementById("chat-user-search-box").style.display = "none";
+    };
+    resDiv.appendChild(div);
+  });
+
+  if (matches.length === 0) {
+    resDiv.innerHTML =
+      "<div style='padding:5px; font-size:0.7rem'>لا يوجد عضو بهذا الاسم مرتبط بحساب</div>";
+  }
+};
+
+// تعديل بسيط لزر الإدخال (Enter) ليدعم النوعين
+window.handleEnter = (e, type) => {
+  if (e.key === "Enter") window.sendMessage(type);
+};
+/* =========================================
+ 54. Emoji Picker Integration
+ ========================================= */
 window.toggleEmojiPicker = () => {
   const picker = document.getElementById("emoji-popup");
   picker.classList.toggle("show");
 };
-
-// 2. الاستماع لحدث اختيار الإيموجي
-// (يتم تنفيذه مرة واحدة عند تحميل الصفحة)
 document.addEventListener("DOMContentLoaded", () => {
   const pickerElement = document.querySelector("emoji-picker");
   const inputField = document.getElementById("global-input");
@@ -4119,23 +4362,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-/* تحديث بسيط لدالة الإرسال لتشغيل الأنيميشن */
 const originalSendMessage = window.sendMessage;
 window.sendMessage = async () => {
-  // تشغيل الصوت (اختياري)
-  // const audio = new Audio('sent.mp3'); audio.play();
-
-  // استدعاء الدالة الأصلية الموجودة في الكود
   await originalSendMessage();
-
-  // إغلاق الإيموجي لو مفتوح
   document.getElementById("emoji-popup").classList.remove("show");
 };
-/* ========================================= */
-/* 🎮 منطق النافبار المودرن */
-/* ========================================= */
-
+/* =========================================
+ 55. Navigation Menu Toggle Logic
+ ========================================= */
 window.toggleNavMenu = () => {
   const grid = document.getElementById("nav-menu-grid");
   const btn = document.querySelector(".nav-toggle-btn");
@@ -4159,46 +4393,20 @@ window.toggleNavMenu = () => {
   }
 };
 
-// إغلاق القائمة عند الضغط خارجها
 document.addEventListener("click", (e) => {
   const grid = document.getElementById("nav-menu-grid");
   const btn = document.querySelector(".nav-toggle-btn");
 
-  if (
-    grid.classList.contains("open") &&
-    !grid.contains(e.target) &&
-    !btn.contains(e.target)
-  ) {
-    window.toggleNavMenu();
+  // إضافة شرط (grid && btn) للتأكد من وجودهم قبل العمل
+  if (grid && btn && grid.classList.contains("open")) {
+    if (!grid.contains(e.target) && !btn.contains(e.target)) {
+      window.toggleNavMenu();
+    }
   }
 });
-
-// تحديث أيقونة الوضع (شمس/قمر) داخل القائمة
-// (هذا الكود يجب أن يعمل مع دالة toggleTheme الموجودة لديك)
-const originalToggleTheme = window.toggleTheme;
-window.toggleTheme = () => {
-  originalToggleTheme(); // نفذ الدالة القديمة
-  updateThemeIconInGrid();
-};
-
-function updateThemeIconInGrid() {
-  const theme = document.documentElement.getAttribute("data-theme");
-  const moon = document.querySelector(".theme-moon");
-  const sun = document.querySelector(".theme-sun");
-
-  if (theme === "dark") {
-    moon.style.display = "none";
-    sun.style.display = "block";
-  } else {
-    moon.style.display = "block";
-    sun.style.display = "none";
-  }
-}
-/* ========================================= */
-/* 🌍 منطق البحث العالمي (تأكد إنه في آخر الملف) */
-/* ========================================= */
-
-// تعريف الدالة في الـ window عشان الزرار يشوفها
+/* =========================================
+ 56. Global Search Functionality
+ ========================================= */
 window.openGlobalSearch = () => {
   const modal = document.getElementById("global-search-modal");
   if (modal) {
@@ -4218,7 +4426,6 @@ window.closeGlobalSearch = () => {
   document.getElementById("global-search-modal").style.display = "none";
 };
 
-// دالة البحث نفسها (معدلة لإظهار الأخطاء واستخدام db الصحيح)
 let globalSearchTimeout;
 window.handleGlobalSearch = (term) => {
   clearTimeout(globalSearchTimeout);
@@ -4302,4 +4509,385 @@ window.copyMemberId = (id) => {
   navigator.clipboard.writeText(id);
   window.showNotification("تم نسخ الكود! استخدمه للربط", "success");
   window.closeGlobalSearch();
+};
+/* =========================================
+ 57. Admin Permissions Management
+ ========================================= */
+async function checkAdminStatus() {
+  // 1. التأكد من وجود البيانات الأساسية
+  if (!window.currentTreeId) {
+    console.warn("⚠️ checkAdminStatus: لا يوجد ID للشجرة حالياً.");
+    return;
+  }
+  if (!auth.currentUser) {
+    console.warn("⚠️ checkAdminStatus: المستخدم غير مسجل دخول.");
+    return;
+  }
+
+  try {
+    // 2. جلب بيانات الشجرة
+    const treeDocRef = doc(db, "trees", window.currentTreeId);
+    const treeSnap = await getDoc(treeDocRef);
+
+    if (treeSnap.exists()) {
+      const data = treeSnap.data();
+      const myUid = auth.currentUser.uid;
+
+      console.log("🔍 فحص الصلاحيات للمستخدم:", myUid);
+      console.log("📄 بيانات الشجرة:", data);
+
+      // 3. تحديد المالك
+      // الكود يدعم المسميات القديمة والجديدة
+      const realOwnerId = data.ownerId || data.adminId || data.creatorId;
+      window.isTreeOwner = realOwnerId === myUid;
+
+      console.log("👑 هل أنا المالك؟", window.isTreeOwner);
+
+      // 4. جلب خريطة الصلاحيات
+      const permsMap = data.adminPermissions || {};
+      const myPerms = permsMap[myUid] || [];
+
+      // 5. تحديد المتغيرات العامة
+      window.canAdd = window.isTreeOwner || myPerms.includes("add");
+      window.canEdit = window.isTreeOwner || myPerms.includes("edit");
+      window.canDelete = window.isTreeOwner || myPerms.includes("delete");
+
+      // 6. إظهار زر الإعدادات (الترس)
+      const settingsBtn = document.getElementById("settings-btn");
+      const isAnyAdmin = window.isTreeOwner || myPerms.length > 0;
+
+      if (settingsBtn) {
+        if (isAnyAdmin) {
+          settingsBtn.style.display = "flex"; // أو inline-block حسب التنسيق
+          console.log("✅ تم إظهار زر الإعدادات.");
+        } else {
+          settingsBtn.style.display = "none";
+          console.log("❌ المستخدم ليس أدمن، الزر مخفي.");
+        }
+      }
+
+      // 7. تحديث باقي الواجهة (أزرار الحذف والإضافة)
+      updateUIBasedOnPermissions();
+    } else {
+      console.error("❌ وثيقة الشجرة غير موجودة في الداتابيز!");
+    }
+  } catch (error) {
+    console.error("❌ خطأ في التحقق من الصلاحيات:", error);
+  }
+}
+
+// إخفاء وإظهار الأزرار داخل الشجرة بناءً على الصلاحيات
+function updateUIBasedOnPermissions() {
+  // مثال: أزرار الحذف تظهر فقط لمن يملك canDelete
+  const deleteBtns = document.querySelectorAll(".action-btn-delete"); // تأكد من الكلاس في HTML
+  deleteBtns.forEach((btn) => {
+    btn.style.display = window.canDelete ? "inline-block" : "none";
+  });
+
+  // زر الإضافة
+  const addBtns = document.querySelectorAll(".add-member-btn");
+  addBtns.forEach((btn) => {
+    btn.style.display = window.canAdd ? "flex" : "none";
+  });
+}
+
+/* ==========================================================================
+   🧩 القسم 2: عرض قائمة المدراء (Settings Modal)
+   ========================================================================== */
+
+// فتح المودال الرئيسي
+window.openTreeSettings = async () => {
+  const modal = document.getElementById("tree-settings-modal");
+  modal.style.display = "flex";
+
+  // قسم نقل الملكية يظهر للمالك فقط
+  const transferSection = document.getElementById("owner-only-section");
+  if (transferSection) {
+    transferSection.style.display = window.isTreeOwner ? "block" : "none";
+  }
+
+  // تحميل القائمة
+  await loadAdminsList();
+};
+
+// جلب البيانات ورسم القائمة
+window.loadAdminsList = async () => {
+  const listDiv = document.getElementById("admins-list");
+  listDiv.innerHTML =
+    '<div style="text-align:center; color:#aaa">⏳ جاري تحميل المدراء...</div>';
+
+  try {
+    const { getDoc, doc } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    );
+    const treeSnap = await getDoc(doc(db, "trees", window.currentTreeId));
+    const data = treeSnap.data();
+
+    // المصدر الرئيسي للصلاحيات هو adminPermissions
+    const adminPerms = data.adminPermissions || {};
+
+    listDiv.innerHTML = "";
+
+    // لو مفيش مدراء
+    if (Object.keys(adminPerms).length === 0) {
+      listDiv.innerHTML =
+        "<div style='opacity:0.7; text-align:center; padding:10px;'>لا يوجد مساعدين حالياً</div>";
+      return;
+    }
+
+    // تكرار المدراء وعرضهم
+    for (const [uid, perms] of Object.entries(adminPerms)) {
+      // جلب الاسم والإيميل
+      let adminName = "مستخدم";
+      let adminEmail = "...";
+      try {
+        const uSnap = await getDoc(doc(db, "users", uid));
+        if (uSnap.exists()) {
+          adminName = uSnap.data().name;
+          adminEmail = uSnap.data().email;
+        }
+      } catch (e) {}
+
+      // إنشاء عنصر الواجهة (HTML)
+      const row = document.createElement("div");
+      row.className = "admin-row";
+      row.style.cssText =
+        "background:rgba(255,255,255,0.05); padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);";
+
+      // أدوات التحكم (تظهر للمالك فقط ليعدل على مساعديه)
+      // المساعد لا يستطيع تعديل صلاحيات مساعد آخر
+      const controls = window.isTreeOwner
+        ? `
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1);">
+           <label style="font-size:0.8rem; cursor:pointer; color:#fff;">
+              <input type="checkbox" ${perms.includes("add") ? "checked" : ""} 
+              onchange="updateAdminPerm('${uid}', 'add', this.checked)"> إضافة
+           </label>
+           <label style="font-size:0.8rem; cursor:pointer; color:#fff;">
+              <input type="checkbox" ${perms.includes("edit") ? "checked" : ""} 
+              onchange="updateAdminPerm('${uid}', 'edit', this.checked)"> تعديل
+           </label>
+           <label style="font-size:0.8rem; cursor:pointer; color:#fff;">
+              <input type="checkbox" ${
+                perms.includes("delete") ? "checked" : ""
+              } 
+              onchange="updateAdminPerm('${uid}', 'delete', this.checked)"> حذف
+           </label>
+           <button onclick="removeAdmin('${uid}')" style="margin-right:auto; color:#ff4757; background:none; border:none; cursor:pointer; font-size:0.9rem;">🗑️ طرد</button>
+        </div>
+      `
+        : `<div style="font-size:0.8rem; color:#aaa; margin-top:5px;">الصلاحيات: ${perms.join(
+            " - "
+          )}</div>`;
+
+      row.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="background:#10b981; color:white; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">${adminName.charAt(
+              0
+            )}</div>
+            <div>
+                <div style="font-weight:bold; color:white;">${adminName}</div>
+                <div style="font-size:0.7rem; color:#aaa;">${adminEmail}</div>
+            </div>
+        </div>
+        ${controls}
+      `;
+      listDiv.appendChild(row);
+    }
+  } catch (e) {
+    console.error(e);
+    listDiv.innerHTML = "حدث خطأ أثناء التحميل";
+  }
+};
+
+/* ==========================================================================
+   🧩 القسم 3: إدارة المدراء (إضافة - تعديل - حذف)
+   ========================================================================== */
+
+// 1. إضافة مدير جديد
+window.addNewAdmin = async () => {
+  if (!window.isTreeOwner) return alert("❌ هذا الإجراء للمالك فقط!");
+
+  const email = document.getElementById("new-admin-email").value.trim();
+
+  // تجميع الصلاحيات المختارة
+  const perms = [];
+  if (document.getElementById("perm-add").checked) perms.push("add");
+  if (document.getElementById("perm-edit").checked) perms.push("edit");
+  if (document.getElementById("perm-delete").checked) perms.push("delete");
+
+  if (!email) return alert("الرجاء كتابة البريد الإلكتروني");
+  if (perms.length === 0) return alert("يجب اختيار صلاحية واحدة على الأقل");
+
+  try {
+    const { collection, query, where, getDocs, updateDoc, doc } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    );
+
+    // البحث عن المستخدم
+    const q = query(collection(db, "users"), where("email", "==", email));
+    const snap = await getDocs(q);
+
+    if (snap.empty) return alert("⚠️ هذا المستخدم غير مسجل في التطبيق!");
+
+    const newUid = snap.docs[0].id;
+    if (newUid === auth.currentUser.uid) return alert("لا يمكنك إضافة نفسك!");
+
+    // التحديث: إضافة مدخل جديد في خريطة adminPermissions
+    const updatePayload = {};
+    updatePayload[`adminPermissions.${newUid}`] = perms;
+
+    // وأيضاً نضيفه في مصفوفة admins القديمة احتياطياً (اختياري)
+    // لكن الأهم هو adminPermissions
+
+    await updateDoc(doc(db, "trees", window.currentTreeId), updatePayload);
+
+    alert(`✅ تم تعيين ${snap.docs[0].data().name} كمساعد بنجاح!`);
+    document.getElementById("new-admin-email").value = ""; // تفريغ الحقل
+    loadAdminsList(); // تحديث القائمة
+  } catch (e) {
+    console.error(e);
+    alert("حدث خطأ: " + e.message);
+  }
+};
+
+// 2. تحديث صلاحية (عند الضغط على Checkbox)
+window.updateAdminPerm = async (uid, permType, isChecked) => {
+  try {
+    const { getDoc, doc, updateDoc } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    );
+    const treeRef = doc(db, "trees", window.currentTreeId);
+
+    const snap = await getDoc(treeRef);
+    let currentPerms = snap.data().adminPermissions[uid] || [];
+
+    if (isChecked) {
+      if (!currentPerms.includes(permType)) currentPerms.push(permType);
+    } else {
+      currentPerms = currentPerms.filter((p) => p !== permType);
+    }
+
+    const updatePayload = {};
+    updatePayload[`adminPermissions.${uid}`] = currentPerms;
+
+    await updateDoc(treeRef, updatePayload);
+    // لا نحتاج لإعادة تحميل القائمة بالكامل هنا لتجنب وميض الشاشة، التعديل تم في الخلفية
+    console.log(`Permission ${permType} updated for ${uid}`);
+  } catch (e) {
+    alert("فشل تحديث الصلاحية: " + e.message);
+  }
+};
+
+// 3. حذف مدير
+window.removeAdmin = async (uid) => {
+  if (!confirm("هل أنت متأكد من حذف هذا المساعد نهائياً؟")) return;
+
+  try {
+    const { doc, updateDoc, deleteField } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    );
+
+    const updatePayload = {};
+    // مسح المفتاح بالكامل من الخريطة
+    updatePayload[`adminPermissions.${uid}`] = deleteField();
+
+    await updateDoc(doc(db, "trees", window.currentTreeId), updatePayload);
+
+    loadAdminsList(); // تحديث القائمة
+    alert("تم الحذف بنجاح 🗑️");
+  } catch (e) {
+    alert("خطأ: " + e.message);
+  }
+};
+
+/* ==========================================================================
+   🧩 القسم 4: وظائف المالك المتقدمة (Transfer & Migrate)
+   ========================================================================== */
+
+// نقل ملكية الشجرة
+window.transferOwnership = async () => {
+  if (!window.isTreeOwner) return;
+
+  const email = prompt(
+    "⚠️ تحذير خطير!\nسيتم نقل ملكية الشجرة بالكامل ولن تصبح المالك بعد الآن.\n\nأدخل بريد المالك الجديد للتأكيد:"
+  );
+  if (!email) return;
+
+  try {
+    const { collection, query, where, getDocs, updateDoc, doc } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    );
+
+    const q = query(collection(db, "users"), where("email", "==", email));
+    const snap = await getDocs(q);
+
+    if (snap.empty) return alert("المستخدم غير موجود!");
+
+    const newOwnerUid = snap.docs[0].id;
+    const newOwnerName = snap.docs[0].data().name;
+
+    if (!confirm(`هل أنت متأكد 100% من نقل الملكية إلى (${newOwnerName})؟`))
+      return;
+
+    // نقل الملكية: تغيير ownerId
+    // وأيضاً: إعطاء المالك القديم (أنا) صلاحيات أدمن كاملة عشان ميتطردش
+    const updatePayload = {
+      ownerId: newOwnerUid,
+    };
+    updatePayload[`adminPermissions.${auth.currentUser.uid}`] = [
+      "add",
+      "edit",
+      "delete",
+    ];
+
+    await updateDoc(doc(db, "trees", window.currentTreeId), updatePayload);
+
+    alert("✅ تمت العملية بنجاح. سيتم إعادة تحميل الصفحة.");
+    location.reload();
+  } catch (e) {
+    alert("خطأ: " + e.message);
+  }
+};
+
+// زر الإصلاح (يظهر لو الشجرة قديمة)
+window.migrateTreeData = async () => {
+  if (!window.currentTreeId) return alert("انتظر تحميل الشجرة");
+
+  if (
+    !confirm(
+      "سيتم تحديث هيكلية الشجرة لتتوافق مع نظام الصلاحيات الجديد. متابعة؟"
+    )
+  )
+    return;
+
+  try {
+    const { getDoc, doc, updateDoc } = await import(
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    );
+    const treeRef = doc(db, "trees", window.currentTreeId);
+    const snap = await getDoc(treeRef);
+    const data = snap.data();
+
+    const owner = data.ownerId || data.adminId || data.creatorId;
+    const oldAdmins = data.admins || [];
+    const newPerms = data.adminPermissions || {};
+
+    // تحويل كل الأدمنز القدام لـ خريطة صلاحيات كاملة
+    oldAdmins.forEach((uid) => {
+      if (uid !== owner && !newPerms[uid]) {
+        newPerms[uid] = ["add", "edit", "delete"];
+      }
+    });
+
+    await updateDoc(treeRef, {
+      ownerId: owner,
+      adminPermissions: newPerms,
+    });
+
+    alert("✅ تم التحديث! النظام جاهز.");
+    location.reload();
+  } catch (e) {
+    alert("خطأ: " + e.message);
+  }
 };

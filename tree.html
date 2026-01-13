@@ -75,102 +75,82 @@
         </div>
 
         <div class="nav-left-controls">
-          <div class="user-profile-wrapper">
-            <div class="user-avatar-btn" onclick="window.toggleProfileMenu()">
-              <img id="nav-user-img" src="mainmale.png" alt="User" />
-              <div class="online-status"></div>
-            </div>
+    <div class="user-profile-wrapper">
+        <div class="user-avatar-btn" onclick="window.toggleProfileMenu()">
+            <img id="nav-user-img" src="mainmale.png" alt="User" />
+            <div class="online-status"></div>
+        </div>
 
-            <div id="profile-dropdown" class="profile-dropdown-menu">
-              <div class="dropdown-header">
+        <div id="profile-dropdown" class="profile-dropdown-menu">
+            <div class="dropdown-header">
                 <span id="dropdown-user-name">اسم المستخدم</span>
                 <small>متصل الآن</small>
-              </div>
-              <hr />
-              <button onclick="window.openMyProfileSettings()">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+            </div>
+            <hr />
+            <button onclick="window.openMyProfileSettings()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 ملفي الشخصي
-              </button>
-              <button onclick="window.toggleTheme()">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                  ></path>
-                </svg>
+            </button>
+            <button onclick="window.toggleTheme()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 الوضع الليلي
-              </button>
-              <hr />
-              <button class="danger-text" onclick="window.logout()">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" x2="9" y1="12" y2="12" />
-                </svg>
-                تسجيل خروج
-              </button>
-            </div>
-          </div>
-          <div class="nav-toggle-btn" onclick="window.toggleNavMenu()">
-            <div class="hamburger-icon">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
+            </button>
+            <button id="settings-btn" onclick="openTreeSettings()" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                المديرين (الإعدادات)
+            </button>
 
-          <button
-            class="nav-icon-btn back-btn"
-            onclick="window.goBack()"
-            title="رجوع"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
+            
+            <hr />
+            <button class="danger-text" onclick="window.logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                تسجيل خروج
+            </button>
         </div>
+    </div>
+
+    <div id="tree-settings-modal" class="modal" style="display: none;">
+        <div class="settings-card-modern">
+            <div class="settings-header">
+                <span>⚙️ إعدادات العائلة</span>
+                <span class="close-btn" onclick="document.getElementById('tree-settings-modal').style.display='none'" style="cursor:pointer; position:static;">&times;</span>
+            </div>
+            <div class="settings-body">
+                <div id="owner-only-section" class="settings-section" style="display: none;">
+                    <span class="section-title">👑 منطقة المالك (إضافة مدير)</span>
+                    <input type="email" id="new-admin-email" placeholder="البريد الإلكتروني..." class="modern-input" />
+                    <div class="permissions-group">
+                        <label class="checkbox-label"><input type="checkbox" id="perm-add" checked> إضافة</label>
+                        <label class="checkbox-label"><input type="checkbox" id="perm-edit" checked> تعديل</label>
+                        <label class="checkbox-label"><input type="checkbox" id="perm-delete"> حذف</label>
+                    </div>
+                    <div class="actions-grid">
+                        <button onclick="addNewAdmin()" class="btn-primary btn-full">✨ تعيين كمدير</button>
+                        <button onclick="transferOwnership()" class="btn-danger btn-full" style="margin-top:5px; border: 1px dashed #ef4444; background: rgba(239, 68, 68, 0.1);">⚠️ نقل الملكية</button>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <span class="section-title" style="color: #10b981;">👥 قائمة المساعدين</span>
+                    <div id="admins-list">
+                        <div style="text-align:center; color:#aaa; padding:10px;">جاري التحميل...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="nav-toggle-btn" onclick="window.toggleNavMenu()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <button class="nav-icon-btn back-btn" onclick="window.goBack()" title="رجوع">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+
+    
+</div>
 
         <div id="nav-menu-grid" class="nav-grid-panel">
           <button class="grid-item" onclick="window.showStatsModal()">
@@ -413,6 +393,7 @@
               </button>
               <div class="social-menu"></div>
             </div>
+        
             <button class="action-item" onclick="window.shareMember()">
               <div class="icon-box warning">
                 <svg
@@ -1310,84 +1291,96 @@
       </svg>
     </button>
 
-    <div id="chat-panel" class="glass-chat-panel">
-      <div class="chat-header">
-        <img src="وصـلــه.png" alt="Waslaa" class="chat-header-logo" />
-        <div class="header-controls">
-          <button class="close-chat" onclick="window.toggleChatPanel()">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+  <div id="chat-panel" class="glass-chat-panel">
+    
+    <div id="chat-list-view" class="chat-view active">
+        <div class="chat-header">
+            <span class="chat-title">💬 المحادثات</span>
+            <button class="close-chat" onclick="window.toggleChatPanel()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
-      </div>
 
-      <div id="global-messages" class="chat-messages-area"></div>
+        <div class="chat-list-container">
+            <div class="chat-list-item pinned" onclick="window.openFamilyChat()">
+                <div class="chat-item-avatar">
+                    <img src="logo.png" alt="Family">
+                </div>
+                <div class="chat-item-info">
+                    <div class="chat-item-top">
+                        <span class="chat-item-name">👨‍👩‍👧‍👦 شات العائلة العام</span>
+                        <span class="chat-pin-icon">📌</span>
+                    </div>
+                    <span class="chat-item-last-msg">دردشة جماعية لكل العائلة...</span>
+                </div>
+            </div>
 
-      <div class="chat-input-area">
-        <button class="emoji-btn" onclick="window.toggleEmojiPicker()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-smile-plus-icon lucide-smile-plus"
-          >
-            <path d="M22 11v1a10 10 0 1 1-9-10" />
-            <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-            <line x1="9" x2="9.01" y1="9" y2="9" />
-            <line x1="15" x2="15.01" y1="9" y2="9" />
-            <path d="M16 5h6" />
-            <path d="M19 2v6" />
-          </svg>
-        </button>
+            <button class="btn-new-chat" onclick="window.showUserSearchForChat()">
+                ➕ ابدأ محادثة خاصة جديدة
+            </button>
+            
+            <div id="chat-user-search-box" style="display:none; padding:10px;">
+                <input type="text" id="chat-search-input" placeholder="اكتب اسم القريب..." class="modern-input" onkeyup="window.searchUserForChat(this.value)">
+                <div id="chat-search-results" class="mini-results-list"></div>
+            </div>
 
-        <input
-          type="text"
-          id="global-input"
-          placeholder="اكتب رسالة للعائلة..."
-          onkeypress="window.handleEnter(event)"
-        />
+            <div class="list-divider"><span>الرسائل الخاصة</span></div>
 
-        <button class="send-btn" onclick="window.sendMessage()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="feather feather-send"
-          >
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-        </button>
-      </div>
-
-      <div id="emoji-popup" class="emoji-popup">
-        <emoji-picker></emoji-picker>
-      </div>
+            <div id="private-chats-list">
+                <div style="text-align:center; padding:20px; opacity:0.6; font-size:0.8rem;">
+                    جاري تحميل المحادثات...
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div id="family-chat-view" class="chat-view">
+        <div class="chat-header">
+            <div class="header-user-info">
+                <button class="back-btn-chat" onclick="window.showChatList()">❮</button>
+                <img src="logo.png" class="header-avatar" alt="Family">
+                <div class="header-text">
+                    <span class="header-name">شات العائلة</span>
+                    <span class="header-status">عام للجميع</span>
+                </div>
+            </div>
+            <button class="close-chat" onclick="window.toggleChatPanel()">×</button>
+        </div>
+        
+        <div id="global-messages" class="chat-messages-area"></div>
+        
+        <div class="chat-input-area">
+            <button class="emoji-btn" onclick="window.toggleEmojiPicker('global')">😊</button>
+            <input type="text" id="global-input" placeholder="اكتب للعائلة..." onkeypress="window.handleEnter(event, 'global')">
+            <button class="send-btn" onclick="window.sendMessage('global')">➤</button>
+        </div>
+    </div>
+
+    <div id="private-chat-view" class="chat-view">
+        <div class="chat-header">
+            <div class="header-user-info">
+                <button class="back-btn-chat" onclick="window.showChatList()">❮</button>
+                <img id="p-header-img" src="" class="header-avatar">
+                <div class="header-text">
+                    <span id="p-header-name" class="header-name">الاسم</span>
+                    <span id="p-header-father" class="header-father"></span> <span id="p-header-status" class="header-status"></span> </div>
+            </div>
+            <button class="close-chat" onclick="window.toggleChatPanel()">×</button>
+        </div>
+
+        <div id="private-messages" class="chat-messages-area"></div>
+
+        <div class="chat-input-area">
+            <button class="emoji-btn" onclick="window.toggleEmojiPicker('private')">😊</button>
+            <input type="text" id="private-input" placeholder="اكتب رسالة خاصة..." onkeypress="window.handleEnter(event, 'private')">
+            <button class="send-btn" onclick="window.sendMessage('private')">➤</button>
+        </div>
+    </div>
+
+    <div id="emoji-popup" class="emoji-popup">
+        <emoji-picker></emoji-picker>
+    </div>
+</div>
     <div
       id="global-search-modal"
       class="alert-overlay hidden"
@@ -1447,7 +1440,8 @@
         </button>
       </div>
     </div>
-
+    
+</div>
     <button
       onclick="window.openGlobalSearch()"
       style="
