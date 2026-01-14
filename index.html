@@ -3,12 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>شجرتي - إرث العائلة</title>
+    <title>WASLAA | Family</title>
     <link rel="icon" href="logo.png" type="image/png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="landing.css" />
   </head>
 
@@ -22,40 +19,58 @@
       </div>
 
       <div class="split-screen-container">
-        <div class="intro-panel">
-          <div class="brand-large">
-            <span class="tree-icon-large">🌳</span>
-            <h1 class="main-title">شجرتي</h1>
-          </div>
+        <div class="intro-panel" id="intro-panel-content">
+  <span class="tree-icon-large">🌳</span>
+  <div class="brand-large">
+    
+    <h1 class="main-title">وصـلــه | عيله</h1>
+  </div>
 
-          <h2 class="hero-slogan">
-            تاريخ عائلتك.. <br />
-            <span class="highlight-text">محفوظ للأبد بذكاء</span>
-          </h2>
+  <h2 class="hero-slogan">
+ وصـلــه <br />
+    <span class="highlight-text">شجرة عيله  حديثه</span>
+  </h2>
 
-          <p class="hero-desc">
-            المنصة العربية الأولى لتوثيق الأنساب. اربط الماضي بالحاضر في شجرة
-            تفاعلية ذكية تجمع شمل العائلة.
-          </p>
+  <p class="hero-desc desktop-only">
+    المنصة الأحدث لتوثيق الروابط العائلية. ندمج أصالة الأنساب مع قوة الذكاء الاصطناعي لنخلق شجرة حية تتنفس بذكرياتكم، صوركم، وتاريخكم المشترك.
+  </p>
+  
+  <p class="hero-desc mobile-only" style="display:none">
+   ترابط بينك وبين عيلتك كلها فموقع واحد. <br> اجمع الشمل، احفظ المناسبات واحتفل بيها، اتواصل مع عيلتك ديما.<br>
+   خلي ولادك ديما مع عيلتهم متصلين
+  </p>
 
-          <div class="features-list">
-            <div class="feature-item">
-              <div class="f-icon">🧬</div>
-              <span>حفظ التسلسل وتوثيق الأنساب بدقة</span>
-            </div>
-            <div class="feature-item">
-              <div class="f-icon">📅</div>
-              <span>تنبيهات المناسبات والذكريات السنوية</span>
-            </div>
-            <div class="feature-item">
-              <div class="f-icon">🔮</div>
-              <span>ذكاء اصطناعي لاكتشاف صلات القرابة</span>
-            </div>
-          </div>
-        </div>
+  <div class="mobile-features mobile-only" style="display:none">
+    <div class="m-feat-badge">✨ شجرة تفاعلية</div>
+    <div class="m-feat-badge">🤖 ذكاء اصطناعي</div>
+    <div class="m-feat-badge">🔒 خصوصية تامة</div>
+  </div>
 
-        <div class="login-panel">
+  <div class="features-list desktop-only">
+    <div class="feature-item">
+      <div class="f-icon">💎</div>
+      <span>واجهة عصرية تليق بتاريخ عيلتك .</span>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">🔗</div>
+      <span>ربط الأجيال وتوضيح صلات القرابة ذكياً.</span>
+    </div>
+    <div class="feature-item">
+      <div class="f-icon">🛡️</div>
+      <span>بيانات مشفرة ومحمية بخصوصية تامة.</span>
+    </div>
+  </div>
+
+  <button class="action-btn mobile-cta-btn" onclick="showMobileLogin()">
+    🚀 ابدأ وصـلــه عيلتك
+  </button>
+</div>
+        <div class="login-panel" id="login-panel-content">
+          
           <div class="glass-login-card">
+            <button class="back-arrow-btn" onclick="hideMobileLogin()">
+      ➜
+    </button>
             <img src="وصـلــه.png" alt="لوجو شجرتي" class="login-card-logo" />
 
             <div class="card-header">
@@ -134,7 +149,7 @@
                 <input
                   type="password"
                   id="auth-password"
-                  placeholder="كلمة المرور"
+                  placeholder="كلمة السر"
                 />
               </div>
 
@@ -147,14 +162,14 @@
               </button>
 
               <div class="auth-links">
-                <span id="switch-text">ليس لديك حساب؟</span>
+                <span id="switch-text"> معندكش حساب؟</span>
                 <a href="#" onclick="toggleAuthMode()" id="switch-action"
-                  >إنشاء حساب جديد</a
+                  >اعمل حساب جديد</a
                 >
               </div>
 
               <div class="forgot-link-wrapper" id="forgot-link-box">
-  <a href="#" onclick="resetPassword(event)">نسيت كلمة المرور؟</a>
+  <a href="#" onclick="resetPassword(event)">نسيت الباسورد؟</a>
 </div>
 
               <div class="auth-divider">
@@ -195,7 +210,7 @@
         <div id="choice-main-view">
           <div class="card-header">
             <h3>مرحباً بك 👋</h3>
-            <p>لبدء رحلتك، اختر الخطوة التالية</p>
+            <p>لبدء شجرتك، اختر الخطوة التالية</p>
           </div>
 
           <div class="tree-options-container">
@@ -217,21 +232,21 @@
           </div>
 
           <button class="text-btn" onclick="logoutFromSelection()">
-            تسجيل الخروج
-          </button>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg> تسجيل الخروج
+</button>
         </div>
 
         <div id="join-tree-view" class="hidden">
           <div class="card-header">
-            <h3>بحث عن عائلة</h3>
-            <p>اكتب اسم العائلة للبحث عنها</p>
+            <h3>بحث عن عيلة</h3>
+            <p>اكتب اسم العيلة للبحث عنها</p>
           </div>
           <div class="custom-input-group">
             <span class="input-icon">🔎</span>
             <input
               type="text"
               id="tree-search-input"
-              placeholder="اسم العائلة..."
+              placeholder="اسم العيلة..."
               oninput="searchForTrees(this.value)"
             />
           </div>
@@ -241,14 +256,14 @@
           </div>
 
           <button class="text-btn" onclick="backToChoiceMain()">
-            عودة للقائمة
-          </button>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo2-icon lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg> إلغاء وعودة للقائمة
+</button>
         </div>
 
         <div id="create-tree-view" class="hidden">
   <div class="card-header">
-    <h3>تأسيس عائلة جديدة</h3>
-    <p>اختر نوع الشجرة وكلمة سر للدخول</p>
+    <h3> وصـلــه جديدة<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tree-palm-icon lucide-tree-palm"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg> </h3>
+    <p>اختر نوع الشجرة وكلمة سر للانشاء</p>
   </div>
 
   <div class="custom-input-group">
@@ -256,7 +271,7 @@
     <input
       type="text"
       id="new-tree-name"
-      placeholder="اسم العائلة (مثال: عائلة الشريف)"
+      placeholder="اسم العائلة (او لقب العيله)"
     />
   </div>
 
@@ -265,7 +280,7 @@
     <input 
       type="password" 
       id="new-tree-password" 
-      placeholder="كلمة سر العائلة (مهم جداً)"
+      placeholder="كلمة سر العيلة (مهم جداً)"
     />
   </div>
   <div class="religion-selector">
@@ -273,14 +288,14 @@
       <input type="radio" name="religion" value="muslim" checked />
       <div class="rel-content">
         <span class="rel-icon">☪️</span>
-        <span>طابع إسلامي</span>
+        <span>شجرة إسلاميه</span>
       </div>
     </label>
     <label class="religion-card">
       <input type="radio" name="religion" value="christian" />
       <div class="rel-content">
         <span class="rel-icon">✝️</span>
-        <span>طابع مسيحي</span>
+        <span>شجرة مسيحيه</span>
       </div>
     </label>
   </div>
@@ -289,13 +304,15 @@
     إنشاء الشجرة
   </button>
   <button class="text-btn" onclick="backToChoiceMain()">
-    عودة للقائمة
-  </button>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo2-icon lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg> إلغاء وعودة للقائمة
+</button>
 </div>
-        <div id="password-challenge-modal" class="alert-overlay hidden" style="display: none; position:fixed; z-index: 1000; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+        
+    </div>
+<div id="password-challenge-modal" class="alert-overlay hidden" style="display: none; position:fixed; z-index: 1000; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
     <div class="glass-login-card" style="max-width: 350px; text-align: center;">
         <h3>🔒 عائلة خاصة</h3>
-        <p>هذه الشجرة محمية. يرجى إدخال رمز الدخول الخاص بالعائلة.</p>
+        <p>هذه الشجرة محمية. يرجى إدخال كلمه السر الخاصه بالعائلة.</p>
         
         <div class="custom-input-group">
             <span class="input-icon">🔑</span>
@@ -306,8 +323,6 @@
         <button class="text-btn" onclick="closePasswordModal()">إلغاء</button>
     </div>
       </div>
-    </div>
-
     <script type="module" src="auth.js"></script>
   </body>
 </html>
